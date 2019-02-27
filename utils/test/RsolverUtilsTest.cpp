@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <memory>
 
 #include "RsolverUtils.h"
 #include "RsolverHelpers.h"
@@ -15,9 +16,9 @@ namespace
 {
 	static const Rsolver::CubeStateInUFRDBL g_solutionState = "UF UR UB UL DF DR DB DL FR FL BR BL UFR URB UBL ULF DRF DFL DLB DBR";
 #ifdef _WIN32
-	static const std::string g_cubeStatesTxtFile = "D:\\sb\\rsolver\\data\\CubeStates.txt";
+	static const std::string g_cubeStatesTxtFile = "..\\..\\..\\rsolver\\data\\CubeStates.txt";
 #else
-	static const std::string g_cubeStatesTxtFile = "D:/sb/rsolver/data/CubeStates.txt";
+	static const std::string g_cubeStatesTxtFile = "../../../rsolver/data/CubeStates.txt";
 #endif
 }
 

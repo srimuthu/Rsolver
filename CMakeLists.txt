@@ -6,7 +6,12 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Set compiler flags and options. 
 # Here it is setting the Visual Studio warning level to 4
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+if (MSVC)
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+endif (MSVC)
+if (UNIX)
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+endif (UNIX)
 
 # Download and unpack googletest at configure time
 configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
