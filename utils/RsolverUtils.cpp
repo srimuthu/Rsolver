@@ -1,6 +1,5 @@
 #include "RsolverUtils.h"
 #include "RsolverHelpers.h"
-#include "Solver.h"
 
 namespace Rsolver {
 
@@ -8,7 +7,7 @@ RsolverUtils::RsolverUtils(CubeStateInUFRDBL solutionState, const std::string& c
 	: m_solutionState(solutionState)
 	, m_defaultStateMap(Helpers::ParseCubeStatesTxtFile(cubeStatesTxtFile))
 {
-	auto defaultSolvedState = Helpers::GetDefaultSolvedCubeStateInColors();
+	m_thistlethwaiteSolver = std::make_unique<Thistlethwaite::ThistlethwaiteSolver>();
 }
 
 CubeStateInUFRDBL RsolverUtils::GetCubeStateInUFRDBL(const CubeStateInColors& cubeStateInColors)
@@ -41,7 +40,7 @@ std::string RsolverUtils::SolveCubeFromGivenState(const CubeStateInUFRDBL & cube
 {
 	std::vector<std::string> scrambledState = Helpers::SplitStringBySpace(cubeStateInUfrdbl);
 	std::vector<std::string> solutionState = Helpers::SplitStringBySpace(m_solutionState);
-	return Thistlethwaite::SolveCubeFromGivenState(scrambledState, solutionState);
+	return Helpers::trim(m_thistlethwaiteSolver->SolveCubeFromGivenState(scrambledState, solutionState));
 }
 
 }

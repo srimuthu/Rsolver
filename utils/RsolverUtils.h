@@ -1,5 +1,7 @@
 #pragma once
+#include <memory>
 #include "IRsolverUtils.h"
+#include "Solver.h"
 
 namespace Rsolver {
 
@@ -14,8 +16,9 @@ class RsolverUtils : public IRsolverUtils
 
 	private:
 
-		CubeStateInUFRDBL		m_solutionState;
-		CubeState				m_defaultStateMap;
+		CubeStateInUFRDBL										m_solutionState;
+		CubeState												m_defaultStateMap;
+		std::unique_ptr<Thistlethwaite::ThistlethwaiteSolver>	m_thistlethwaiteSolver;
 };
 }
 

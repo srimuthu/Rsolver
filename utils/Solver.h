@@ -4,14 +4,22 @@ namespace Rsolver
 namespace Thistlethwaite 
 {
 
-	using namespace std;
+typedef std::vector<int> vi;
 
-	typedef vector<int> vi;
-
+class ThistlethwaiteSolver
+{
+public:
+	ThistlethwaiteSolver();
+	~ThistlethwaiteSolver();
 	vi ApplyMove(int move, vi state);
 	int Inverse(int move);
 	vi IdentifyState(vi state);
-	string SolveCubeFromGivenState(vector<string> scrambledState, vector<string> solutionState);
+	std::string SolveCubeFromGivenState(std::vector<std::string> scrambledState, std::vector<std::string> solutionState);
+private:
+	int phase;
+
+};
+
 }
 
 }

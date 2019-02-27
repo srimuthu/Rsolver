@@ -151,7 +151,7 @@ TEST_F(RsolverUtilsTest, GetSolutionMovesForState1U)
 	CubeStateInColors cubeStateInColors = CreateNonDefaultCubeState1U();
 	CubeStateInUFRDBL currentState = "UR UB UL UF DF DR DB DL FR FL BR BL URB UBL ULF UFR DRF DFL DLB DBR";
 	EXPECT_EQ(currentState, m_rsolverUtils->GetCubeStateInUFRDBL(cubeStateInColors));
-	std::string expectedSolution = "U1U2";
+	std::string expectedSolution = "U1 U2";
 	EXPECT_EQ(expectedSolution, m_rsolverUtils->SolveCubeFromGivenState(currentState));
 }
 
@@ -161,7 +161,8 @@ TEST_F(RsolverUtilsTest, GetSolutionMovesForStateComplexShuffle)
 	CubeStateInColors cubeStateInColors = CreateNonDefaultCubeStateSeq1();
 	CubeStateInUFRDBL currentState = "RU LF UB DR DL BL UL FU BD RF BR FD LDF LBD FUL RFD UFR RDB UBL RBU";
 	EXPECT_EQ(currentState, m_rsolverUtils->GetCubeStateInUFRDBL(cubeStateInColors));
-	std::string expectedSolution = "U1U2";
+	std::string expectedSolution = "D1 F1 B3 U3 B3 R3 U1 B2 D1 U1 L2 U1 L3 U1 B2 U3 L2 U1 B2 U3 R2 U1 F2 U3 F2 U2 D2 L2 F2 R2 B2 D2 L2 D2 L2";
+	// The algorithm implementation is deterministic, so it is safe to always expect same solution for a given input
 	EXPECT_EQ(expectedSolution, m_rsolverUtils->SolveCubeFromGivenState(currentState));
 }
 

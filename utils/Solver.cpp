@@ -39,65 +39,76 @@ int affectedCubies[][8] = {
 	{  1,  8,  5, 10,  1,  0,  4,  7 },   // R
 };
 
-vi ApplyMove ( int move, vi state ) {
+ThistlethwaiteSolver::ThistlethwaiteSolver()
+	:phase(0)
+{}
+
+ThistlethwaiteSolver::~ThistlethwaiteSolver()
+{
+	phase = 0;
+}
+
+vi ThistlethwaiteSolver::ApplyMove(int move, vi state)
+{
 	int turns = move % 3 + 1;
 	int face = move / 3;
-	while( turns-- ){
-	vi oldState = state;
-	for( int i=0; i<8; i++ ){
-		int isCorner = i > 3;
-		int target = affectedCubies[face][i] + isCorner*12;
-		int killer = affectedCubies[face][(i&3)==3 ? i-3 : i+1] + isCorner*12;;
-		int orientationDelta = (i<4) ? (face>1 && face<4) : (face<2) ? 0 : 2 - (i&1);
-		state[target] = oldState[killer];
-		state[target+20] = oldState[killer+20] + orientationDelta;
-		if( !turns )
-	state[target+20] %= 2 + isCorner;
-	}
+	while (turns--) {
+		vi oldState = state;
+		for (int i = 0; i < 8; i++) {
+			int isCorner = i > 3;
+			int target = affectedCubies[face][i] + isCorner * 12;
+			int killer = affectedCubies[face][(i & 3) == 3 ? i - 3 : i + 1] + isCorner * 12;;
+			int orientationDelta = (i < 4) ? (face > 1 && face < 4) : (face < 2) ? 0 : 2 - (i & 1);
+			state[target] = oldState[killer];
+			state[target + 20] = oldState[killer + 20] + orientationDelta;
+			if (!turns)
+				state[target + 20] %= 2 + isCorner;
+		}
 	}
 	return state;
 }
 
-int Inverse ( int move ) {
+int ThistlethwaiteSolver::Inverse(int move)
+{
 	return move + 2 - 2 * (move % 3);
 }
 
-vi IdentifyState ( vi state ) {
-  
+vi ThistlethwaiteSolver::IdentifyState(vi state)
+{
 	//--- Phase 1: Edge orientations.
-	if( phase < 2 )
-	return vi( state.begin() + 20, state.begin() + 32 );
-  
+	if (phase < 2)
+		return vi(state.begin() + 20, state.begin() + 32);
+
 	//-- Phase 2: Corner orientations, E slice edges.
-	if( phase < 3 ){
-	vi result( state.begin() + 31, state.begin() + 40 );
-	for( int e=0; e<12; e++ )
-		result[0] |= (state[e] / 8) << e;
-	return result;
+	if (phase < 3) {
+		vi result(state.begin() + 31, state.begin() + 40);
+		for (int e = 0; e < 12; e++)
+			result[0] |= (state[e] / 8) << e;
+		return result;
 	}
-  
+
 	//--- Phase 3: Edge slices M and S, corner tetrads, overall parity.
-	if( phase < 4 ){
-	vi result( 3 );
-	for( int e=0; e<12; e++ )
-		result[0] |= ((state[e] > 7) ? 2 : (state[e] & 1)) << (2*e);
-	for( int c=0; c<8; c++ )
-		result[1] |= ((state[c+12]-12) & 5) << (3*c);
-	for( int i=12; i<20; i++ )
-		for( int j=i+1; j<20; j++ )
-	result[2] ^= state[i] > state[j];
-	return result;
+	if (phase < 4) {
+		vi result(3);
+		for (int e = 0; e < 12; e++)
+			result[0] |= ((state[e] > 7) ? 2 : (state[e] & 1)) << (2 * e);
+		for (int c = 0; c < 8; c++)
+			result[1] |= ((state[c + 12] - 12) & 5) << (3 * c);
+		for (int i = 12; i < 20; i++)
+			for (int j = i + 1; j < 20; j++)
+				result[2] ^= state[i] > state[j];
+		return result;
 	}
-  
+
 	//--- Phase 4: The rest.
 	return state;
 }
 
-string SolveCubeFromGivenState(vector<string> scrambledState, vector<string> solutionState)
+std::string ThistlethwaiteSolver::SolveCubeFromGivenState(std::vector<std::string> scrambledState, std::vector<std::string> solutionState)
 {
-	ostringstream os; 
+	std::ostringstream os;
 	//--- Convert goal state to array for pointer arithmetic
-	string goal[20]; 
+	std::string goal[20];
 	for (int i = 0; i < 20; i++)
 	{
 		goal[i] = solutionState[i];
@@ -110,7 +121,7 @@ string SolveCubeFromGivenState(vector<string> scrambledState, vector<string> sol
 		goalState[i] = i;
 
 		//--- Current (start) state.
-		string cubie = scrambledState[i];
+		std::string cubie = scrambledState[i];
 		while ((currentState[i] = find(goal, goal + 20, cubie) - goal) == 20) {
 			cubie = cubie.substr(1) + cubie[0];
 			currentState[i + 20]++;
@@ -126,13 +137,13 @@ string SolveCubeFromGivenState(vector<string> scrambledState, vector<string> sol
 			continue;
 
 		//--- Initialize the BFS queue.
-		queue<vi> q;
+		std::queue<vi> q;
 		q.push(currentState);
 		q.push(goalState);
 
 		//--- Initialize the BFS tables.
-		map<vi, vi> predecessor;
-		map<vi, int> direction, lastMove;
+		std::map<vi, vi> predecessor;
+		std::map<vi, int> direction, lastMove;
 		direction[currentId] = 1;
 		direction[goalId] = 2;
 
@@ -177,7 +188,7 @@ string SolveCubeFromGivenState(vector<string> scrambledState, vector<string> sol
 
 						//--- Print and apply the algorithm.
 						for (int i = 0; i < (int)algorithm.size(); i++) {
-							os << "UDFBLR"[algorithm[i] / 3] << algorithm[i] % 3 + 1;
+							os << "UDFBLR"[algorithm[i] / 3] << algorithm[i] % 3 + 1 << " ";
 							currentState = ApplyMove(algorithm[i], currentState);
 						}
 
@@ -198,7 +209,7 @@ string SolveCubeFromGivenState(vector<string> scrambledState, vector<string> sol
 	nextPhasePlease:
 		;
 	}
-return os.str();
+	return os.str();
 }
 
 } // Thistlethwaite
