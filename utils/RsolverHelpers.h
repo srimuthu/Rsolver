@@ -18,9 +18,7 @@ namespace Rsolver {
 		std::string GetOrientationForKey(const CubeState& cubeState, const std::string& key, CubeType type);
 		std::string GetKeyForOrientation(const CubeState& cubeState, const std::string& orientation, CubeType type);
 
-		CubeStateInUFRDBL GetCubeStateInUFRDBL(const CubeStateInColors& cubeStateInColors,
-			const CubeStateInUFRDBL& solutionState,
-			const CubeState& defaultStateMap);
+		bool IsTokenAnEdge(const std::string& token);
 
 		std::string GetEdgeOrientationFromCubeStateInColors(const CubeStateInColors& cubeStateInColors, const EdgeCube& edgeCube);
 		std::string GetCornerOrientationFromCubeStateInColors(const CubeStateInColors& cubeStateInColors, const CornerCube& cornerCube);

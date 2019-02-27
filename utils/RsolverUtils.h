@@ -10,6 +10,7 @@ class RsolverUtils : public IRsolverUtils
 		~RsolverUtils() = default;
 
 		virtual CubeStateInUFRDBL GetCubeStateInUFRDBL(const CubeStateInColors& cubeStateInColors) override;
+		virtual std::string SolveCubeFromGivenState(const CubeStateInUFRDBL& cubeStateInUfrdbl) override;
 
 	private:
 

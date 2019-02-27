@@ -165,36 +165,9 @@ namespace Rsolver {
 			}
 		}
 
-		CubeStateInUFRDBL GetCubeStateInUFRDBL(const CubeStateInColors & cubeStateInColors,
-			const CubeStateInUFRDBL & solutionState,
-			const CubeState & defaultStateMap)
+		bool IsTokenAnEdge(const std::string & token)
 		{
-			CubeStateInUFRDBL cubeStateInUfrdbl = "";
-			auto solutionStateTokens = SplitStringBySpace(solutionState);
-			for (auto const& token : solutionStateTokens)
-			{
-				if (token.length() == 2) // edge
-				{
-					// Get cubie indices from default state map
-					auto edgeCube = defaultStateMap.edgeMap.find(token)->second;
-					auto actualOrientationId = GetEdgeOrientationFromCubeStateInColors(cubeStateInColors, edgeCube);
-					// search for the actual orientation id in default map
-					auto actualKey = GetKeyForOrientation(defaultStateMap, actualOrientationId, CubeType::Edge);
-					cubeStateInUfrdbl = cubeStateInUfrdbl + actualKey + " ";
-				}
-				else if (token.length() == 3) // corner
-				{
-					{
-						// Get cubie indices from default state map
-						auto cornerCube = defaultStateMap.cornerMap.find(token)->second;
-						auto actualOrientationId = GetCornerOrientationFromCubeStateInColors(cubeStateInColors, cornerCube);
-						// search for the actual orientation id in default map
-						auto actualKey = GetKeyForOrientation(defaultStateMap, actualOrientationId, CubeType::Corner);
-						cubeStateInUfrdbl = cubeStateInUfrdbl + actualKey + " ";
-					}
-				}
-			}
-			return trim(cubeStateInUfrdbl);
+			return (token.length() == 2);
 		}
 
 		std::string GetEdgeOrientationFromCubeStateInColors(const CubeStateInColors & cubeStateInColors, const EdgeCube & edgeCube)
