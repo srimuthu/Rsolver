@@ -25,12 +25,10 @@ CubeStateInUFRDBL RsolverUtils::GetCubeStateInUFRDBL(const CubeStateInColors& cu
 		}
 		else
 		{
-			{
-				auto cornerCube = m_defaultStateMap.cornerMap.find(token)->second;
-				auto actualOrientationId = Helpers::GetCornerOrientationFromCubeStateInColors(cubeStateInColors, cornerCube);
-				auto actualKey = Helpers::GetKeyForOrientation(m_defaultStateMap, actualOrientationId, CubeType::Corner);
-				cubeStateInUfrdbl = cubeStateInUfrdbl + actualKey + " ";
-			}
+			auto cornerCube = m_defaultStateMap.cornerMap.find(token)->second;
+			auto actualOrientationId = Helpers::GetCornerOrientationFromCubeStateInColors(cubeStateInColors, cornerCube);
+			auto actualKey = Helpers::GetKeyForOrientation(m_defaultStateMap, actualOrientationId, CubeType::Corner);
+			cubeStateInUfrdbl = cubeStateInUfrdbl + actualKey + " ";
 		}
 	}
 	return Helpers::trim(cubeStateInUfrdbl);
