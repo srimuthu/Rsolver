@@ -147,7 +147,7 @@ namespace Rsolver {
 						return entry.first;
 					}
 				}
-				throw std::runtime_error("orientation not found!");
+				throw std::runtime_error("orientation not found! "+ orientation);
 			}
 			case CubeType::Corner: 
 			{
@@ -159,7 +159,7 @@ namespace Rsolver {
 						return entry.first;
 					}
 				}
-				throw std::runtime_error("orientation not found!");
+				throw std::runtime_error("orientation not found! " + orientation);
 			}
 			default: throw std::runtime_error("Invalid cube type!");
 			}
