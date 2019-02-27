@@ -1,0 +1,72 @@
+edge UF 01 0 7 1 1
+edge FU 10 1 1 0 7
+edge UR 02 0 5 2 1
+edge RU 20 2 1 0 5
+edge UB 04 0 1 4 1
+edge BU 40 4 1 0 1
+edge UL 05 0 3 5 1
+edge LU 50 5 1 0 3
+edge DF 31 3 1 1 7
+edge FD 13 1 7 3 1
+edge DR 32 3 5 2 7
+edge RD 23 2 7 3 5
+edge DB 34 3 7 4 7
+edge BD 43 4 7 2 7
+edge DL 35 3 3 5 7
+edge LD 53 5 7 3 3
+edge FR 12 1 5 2 3
+edge RF 21 2 3 1 5
+edge FL 15 1 3 5 5
+edge LF 51 5 5 1 3
+edge BR 42 4 3 2 5
+edge RB 24 2 5 4 3
+edge BL 45 4 5 5 3
+edge LB 54 5 3 4 5
+corner UFR 012 0 8 1 2 2 0
+corner URF 021 0 8 2 0 1 2
+corner FUR 102 1 2 0 8 2 0
+corner FRU 120 1 2 2 0 0 8
+corner RUF 201 2 0 0 8 1 2
+corner RFU 210 2 0 1 2 0 8
+corner URB 024 0 2 2 2 4 0
+corner UBR 042 0 2 4 0 2 2
+corner RUB 204 2 2 0 2 4 0
+corner RBU 240 2 2 4 0 0 2
+corner BUR 402 4 0 0 2 2 2
+corner BRU 420 4 0 2 2 0 2
+corner UBL 045 0 0 4 2 5 0
+corner ULB 054 0 0 5 0 4 2
+corner BUL 405 4 2 0 0 5 0
+corner BLU 450 4 2 5 0 0 0
+corner LUB 504 5 0 0 0 4 2
+corner LBU 540 5 0 4 2 0 0
+corner ULF 051 0 6 5 2 1 0
+corner UFL 015 0 6 1 0 5 2
+corner LUF 501 5 2 0 6 1 0
+corner LFU 510 5 2 1 0 0 6
+corner FUL 105 1 0 0 6 5 2
+corner FLU 150 1 0 5 2 0 6
+corner DRF 321 3 2 2 6 1 8
+corner DFR 312 3 2 1 8 2 6
+corner RDF 231 2 6 3 2 1 8
+corner RFD 213 2 6 1 8 3 2
+corner FDR 132 1 8 3 2 2 6
+corner FRD 123 1 8 2 6 3 2
+corner DFL 315 3 0 1 6 5 8
+corner DLF 351 3 0 5 8 1 6
+corner FDL 135 1 6 3 0 5 8
+corner FLD 153 1 6 5 8 3 0
+corner LDF 531 5 8 3 0 1 6
+corner LFD 513 5 8 1 6 3 0
+corner DLB 354 3 6 5 6 4 8
+corner DBL 345 3 6 4 8 5 6
+corner LDB 534 5 6 3 6 4 8
+corner LBD 543 5 6 4 8 3 6
+corner BDL 435 4 8 3 6 5 6
+corner BLD 453 4 8 5 6 3 6
+corner DBR 342 3 8 4 6 2 8
+corner DRB 324 3 8 2 8 4 6
+corner BRD 423 4 6 2 8 3 8
+corner BDR 432 4 6 3 8 2 8
+corner RDB 234 2 8 3 8 4 6
+corner RBD 243 2 8 4 6 3 8
