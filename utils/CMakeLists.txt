@@ -10,7 +10,8 @@ set (HEADERS
       "RsolverUtils.h"
 	  "RsolverTypes.h"
 	  "RsolverHelpers.h"
-	  "ThistlethwaiteSolver.h")
+	  "ThistlethwaiteSolver.h"
+	  "cvtest.h")
 
 # Create named folders for the sources within the .vcproj
 # Empty name lists them directly under the .vcproj
@@ -20,6 +21,13 @@ source_group("headers" FILES ${HEADERS})
 
 # Properties->C/C++->General->Additional Include Directories
 include_directories (.)
+
+# The following step has already been performed for UNIX from top level Cmakelists
+if (MSVC)
+	message(STATUS "    libraries: ${OpenCV_LIBS}")
+	message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
+	include_directories(${OpenCV_INCLUDE_DIRS})
+endif (MSVC)
 
 # Also adds sources to the Solution Explorer
 add_library(rsolverutils STATIC ${INTERFACES} ${SOURCES} ${HEADERS})
@@ -31,6 +39,7 @@ set_property(TARGET rsolverutils PROPERTY FOLDER "libraries")
 set_target_properties(rsolverutils PROPERTIES
                       RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
+target_link_libraries(rsolverutils ${OpenCV_LIBS})
 # Adds logic to INSTALL.vcproj to copy math.dll to the destination directory
 # install (TARGETS utils
 #         RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/_install

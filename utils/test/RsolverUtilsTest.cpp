@@ -4,6 +4,7 @@
 
 #include "RsolverUtils.h"
 #include "RsolverHelpers.h"
+#include "cvtest.h"
 
 namespace Rsolver
 {
@@ -164,6 +165,11 @@ TEST_F(RsolverUtilsTest, GetSolutionMovesForStateComplexShuffle)
 	std::string expectedSolution = "D1 F1 B3 U3 B3 R3 U1 B2 D1 U1 L2 U1 L3 U1 B2 U3 L2 U1 B2 U3 R2 U1 F2 U3 F2 U2 D2 L2 F2 R2 B2 D2 L2 D2 L2";
 	// The algorithm implementation is deterministic, so it is safe to always expect same solution for a given input
 	EXPECT_EQ(expectedSolution, m_rsolverUtils->SolveCubeFromGivenState(currentState));
+}
+
+TEST_F(RsolverUtilsTest, TestIfOpenCvRuns)
+{
+	testCv();
 }
 
 }
