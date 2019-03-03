@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include "IRsolverUtils.h"
-#include "Solver.h"
+#include "ThistlethwaiteSolver.h"
 
 namespace Rsolver {
 

@@ -4,13 +4,13 @@ set (INTERFACES
 set (SOURCES
       "RsolverUtils.cpp"
 	  "RsolverHelpers.cpp"
-	  "Solver.cpp")
+	  "ThistlethwaiteSolver.cpp")
 
 set (HEADERS
       "RsolverUtils.h"
 	  "RsolverTypes.h"
 	  "RsolverHelpers.h"
-	  "Solver.h")
+	  "ThistlethwaiteSolver.h")
 
 # Create named folders for the sources within the .vcproj
 # Empty name lists them directly under the .vcproj

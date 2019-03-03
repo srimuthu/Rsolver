@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <sstream>
 
-#include "Solver.h"
+#include "ThistlethwaiteSolver.h"
 
 /**********************************************************************
  * 
@@ -27,25 +27,13 @@ namespace Rsolver
 namespace Thistlethwaite
 {
 
-int applicableMoves[] = { 0, 262143, 259263, 74943, 74898 };
-int phase;
-
-int affectedCubies[][8] = {
-	{  0,  1,  2,  3,  0,  1,  2,  3 },   // U
-	{  4,  7,  6,  5,  4,  5,  6,  7 },   // D
-	{  0,  9,  4,  8,  0,  3,  5,  4 },   // F
-	{  2, 10,  6, 11,  2,  1,  7,  6 },   // B
-	{  3, 11,  7,  9,  3,  2,  6,  5 },   // L
-	{  1,  8,  5, 10,  1,  0,  4,  7 },   // R
-};
-
 ThistlethwaiteSolver::ThistlethwaiteSolver()
-	:phase(0)
+	:m_phase(0)
 {}
 
 ThistlethwaiteSolver::~ThistlethwaiteSolver()
 {
-	phase = 0;
+	m_phase = 0;
 }
 
 vi ThistlethwaiteSolver::ApplyMove(int move, vi state)
@@ -76,11 +64,11 @@ int ThistlethwaiteSolver::Inverse(int move)
 vi ThistlethwaiteSolver::IdentifyState(vi state)
 {
 	//--- Phase 1: Edge orientations.
-	if (phase < 2)
+	if (m_phase < 2)
 		return vi(state.begin() + 20, state.begin() + 32);
 
 	//-- Phase 2: Corner orientations, E slice edges.
-	if (phase < 3) {
+	if (m_phase < 3) {
 		vi result(state.begin() + 31, state.begin() + 40);
 		for (int e = 0; e < 12; e++)
 			result[0] |= (state[e] / 8) << e;
@@ -88,7 +76,7 @@ vi ThistlethwaiteSolver::IdentifyState(vi state)
 	}
 
 	//--- Phase 3: Edge slices M and S, corner tetrads, overall parity.
-	if (phase < 4) {
+	if (m_phase < 4) {
 		vi result(3);
 		for (int e = 0; e < 12; e++)
 			result[0] |= ((state[e] > 7) ? 2 : (state[e] & 1)) << (2 * e);
@@ -129,7 +117,7 @@ std::string ThistlethwaiteSolver::SolveCubeFromGivenState(std::vector<std::strin
 	}
 
 	//--- Dance the funky Thistlethwaite...
-	while (++phase < 5) {
+	while (++m_phase < 5) {
 
 		//--- Compute ids for current and goal state, skip phase if equal.
 		vi currentId = IdentifyState(currentState), goalId = IdentifyState(goalState);
@@ -158,7 +146,7 @@ std::string ThistlethwaiteSolver::SolveCubeFromGivenState(std::vector<std::strin
 
 			//--- Apply all applicable moves to it and handle the new state.
 			for (int move = 0; move < 18; move++) {
-				if (applicableMoves[phase] & (1 << move)) {
+				if (applicableMoves[m_phase] & (1 << move)) {
 
 					//--- Apply the move.
 					vi newState = ApplyMove(move, oldState);
