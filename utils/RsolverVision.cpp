@@ -8,6 +8,11 @@ namespace Rsolver {
 		SetCaptureDimensions(m_width, m_height);
 	}
 
+	RsolverVision::~RsolverVision()
+	{
+		m_videoCapture.release();
+	}
+
 	cv::Mat RsolverVision::CaptureImageFromSensor()
 	{
 		cv::Mat image;
@@ -36,8 +41,8 @@ namespace Rsolver {
 
 	void RsolverVision::SetCaptureDimensions(int width, int height)
 	{
-		m_videoCapture.set(cv::CAP_PROP_FRAME_WIDTH, m_width);
-		m_videoCapture.set(cv::CAP_PROP_FRAME_HEIGHT, m_height);
+		m_videoCapture.set(cv::CAP_PROP_FRAME_WIDTH, width);
+		m_videoCapture.set(cv::CAP_PROP_FRAME_HEIGHT, height);
 	}
 }
 

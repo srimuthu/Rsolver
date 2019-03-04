@@ -11,7 +11,7 @@ class RsolverVision : public IRsolverVision
 {
 	public:
 		explicit RsolverVision();
-		~RsolverVision() = default;
+		~RsolverVision();
 
 		virtual cv::Mat CaptureImageFromSensor() override;
 		virtual cv::Mat GetImageFromFile(std::string fileName) override;

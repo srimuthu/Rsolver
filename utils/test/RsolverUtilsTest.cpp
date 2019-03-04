@@ -120,6 +120,73 @@ public:
 		return cubeStateInColors;
 	}
 
+	CubeStateInColors CreateNonDefaultCubeStateSeq2()
+	{
+		CubeStateInColors cubeStateInColors = Helpers::GetDefaultSolvedCubeStateInColors();
+		// White face (Up)
+		cubeStateInColors[static_cast<int>(CubeFaces::Up)].faceColorVector[0] = Colors::Orange;
+		cubeStateInColors[static_cast<int>(CubeFaces::Up)].faceColorVector[1] = Colors::Yellow;
+		cubeStateInColors[static_cast<int>(CubeFaces::Up)].faceColorVector[2] = Colors::Red;
+		cubeStateInColors[static_cast<int>(CubeFaces::Up)].faceColorVector[3] = Colors::Yellow;
+		cubeStateInColors[static_cast<int>(CubeFaces::Up)].faceColorVector[4] = Colors::White;
+		cubeStateInColors[static_cast<int>(CubeFaces::Up)].faceColorVector[5] = Colors::Orange;
+		cubeStateInColors[static_cast<int>(CubeFaces::Up)].faceColorVector[6] = Colors::White;
+		cubeStateInColors[static_cast<int>(CubeFaces::Up)].faceColorVector[7] = Colors::Yellow;
+		cubeStateInColors[static_cast<int>(CubeFaces::Up)].faceColorVector[8] = Colors::White;
+		// Green face (Front)
+		cubeStateInColors[static_cast<int>(CubeFaces::Front)].faceColorVector[0] = Colors::Green;
+		cubeStateInColors[static_cast<int>(CubeFaces::Front)].faceColorVector[1] = Colors::Blue;
+		cubeStateInColors[static_cast<int>(CubeFaces::Front)].faceColorVector[2] = Colors::Green;
+		cubeStateInColors[static_cast<int>(CubeFaces::Front)].faceColorVector[3] = Colors::White;
+		cubeStateInColors[static_cast<int>(CubeFaces::Front)].faceColorVector[4] = Colors::Green;
+		cubeStateInColors[static_cast<int>(CubeFaces::Front)].faceColorVector[5] = Colors::Blue;
+		cubeStateInColors[static_cast<int>(CubeFaces::Front)].faceColorVector[6] = Colors::Red;
+		cubeStateInColors[static_cast<int>(CubeFaces::Front)].faceColorVector[7] = Colors::Red;
+		cubeStateInColors[static_cast<int>(CubeFaces::Front)].faceColorVector[8] = Colors::Green;
+		// Red face (Right)
+		cubeStateInColors[static_cast<int>(CubeFaces::Right)].faceColorVector[0] = Colors::Red;
+		cubeStateInColors[static_cast<int>(CubeFaces::Right)].faceColorVector[1] = Colors::White;
+		cubeStateInColors[static_cast<int>(CubeFaces::Right)].faceColorVector[2] = Colors::Blue;
+		cubeStateInColors[static_cast<int>(CubeFaces::Right)].faceColorVector[3] = Colors::Orange;
+		cubeStateInColors[static_cast<int>(CubeFaces::Right)].faceColorVector[4] = Colors::Red;
+		cubeStateInColors[static_cast<int>(CubeFaces::Right)].faceColorVector[5] = Colors::Green;
+		cubeStateInColors[static_cast<int>(CubeFaces::Right)].faceColorVector[6] = Colors::Red;
+		cubeStateInColors[static_cast<int>(CubeFaces::Right)].faceColorVector[7] = Colors::Green;
+		cubeStateInColors[static_cast<int>(CubeFaces::Right)].faceColorVector[8] = Colors::Yellow;
+		// Yellow face (Down)
+		cubeStateInColors[static_cast<int>(CubeFaces::Down)].faceColorVector[0] = Colors::Blue;
+		cubeStateInColors[static_cast<int>(CubeFaces::Down)].faceColorVector[1] = Colors::Blue;
+		cubeStateInColors[static_cast<int>(CubeFaces::Down)].faceColorVector[2] = Colors::Yellow;
+		cubeStateInColors[static_cast<int>(CubeFaces::Down)].faceColorVector[3] = Colors::White;
+		cubeStateInColors[static_cast<int>(CubeFaces::Down)].faceColorVector[4] = Colors::Yellow;
+		cubeStateInColors[static_cast<int>(CubeFaces::Down)].faceColorVector[5] = Colors::Orange;
+		cubeStateInColors[static_cast<int>(CubeFaces::Down)].faceColorVector[6] = Colors::Blue;
+		cubeStateInColors[static_cast<int>(CubeFaces::Down)].faceColorVector[7] = Colors::White;
+		cubeStateInColors[static_cast<int>(CubeFaces::Down)].faceColorVector[8] = Colors::Orange;
+		// Blue face (Back)
+		cubeStateInColors[static_cast<int>(CubeFaces::Back)].faceColorVector[0] = Colors::White;
+		cubeStateInColors[static_cast<int>(CubeFaces::Back)].faceColorVector[1] = Colors::Green;
+		cubeStateInColors[static_cast<int>(CubeFaces::Back)].faceColorVector[2] = Colors::Yellow;
+		cubeStateInColors[static_cast<int>(CubeFaces::Back)].faceColorVector[3] = Colors::Red;
+		cubeStateInColors[static_cast<int>(CubeFaces::Back)].faceColorVector[4] = Colors::Blue;
+		cubeStateInColors[static_cast<int>(CubeFaces::Back)].faceColorVector[5] = Colors::Orange;
+		cubeStateInColors[static_cast<int>(CubeFaces::Back)].faceColorVector[6] = Colors::Blue;
+		cubeStateInColors[static_cast<int>(CubeFaces::Back)].faceColorVector[7] = Colors::Green;
+		cubeStateInColors[static_cast<int>(CubeFaces::Back)].faceColorVector[8] = Colors::White;
+		// Organge face (Left)
+		cubeStateInColors[static_cast<int>(CubeFaces::Left)].faceColorVector[0] = Colors::Green;
+		cubeStateInColors[static_cast<int>(CubeFaces::Left)].faceColorVector[1] = Colors::Red;
+		cubeStateInColors[static_cast<int>(CubeFaces::Left)].faceColorVector[2] = Colors::Orange;
+		cubeStateInColors[static_cast<int>(CubeFaces::Left)].faceColorVector[3] = Colors::Yellow;
+		cubeStateInColors[static_cast<int>(CubeFaces::Left)].faceColorVector[4] = Colors::Orange;
+		cubeStateInColors[static_cast<int>(CubeFaces::Left)].faceColorVector[5] = Colors::Red;
+		cubeStateInColors[static_cast<int>(CubeFaces::Left)].faceColorVector[6] = Colors::Orange;
+		cubeStateInColors[static_cast<int>(CubeFaces::Left)].faceColorVector[7] = Colors::Blue;
+		cubeStateInColors[static_cast<int>(CubeFaces::Left)].faceColorVector[8] = Colors::Yellow;
+
+		return cubeStateInColors;
+	}
+
 	std::unique_ptr<IRsolverUtils>	m_rsolverUtils;
 };
 
@@ -162,6 +229,17 @@ TEST_F(RsolverUtilsTest, GetSolutionMovesForStateComplexShuffle)
 	CubeStateInUFRDBL currentState = "RU LF UB DR DL BL UL FU BD RF BR FD LDF LBD FUL RFD UFR RDB UBL RBU";
 	EXPECT_EQ(currentState, m_rsolverUtils->GetCubeStateInUFRDBL(cubeStateInColors));
 	std::string expectedSolution = "D1 F1 B3 U3 B3 R3 U1 B2 D1 U1 L2 U1 L3 U1 B2 U3 L2 U1 B2 U3 R2 U1 F2 U3 F2 U2 D2 L2 F2 R2 B2 D2 L2 D2 L2";
+	// The algorithm implementation is deterministic, so it is safe to always expect same solution for a given input
+	EXPECT_EQ(expectedSolution, m_rsolverUtils->SolveCubeFromGivenState(currentState));
+}
+
+TEST_F(RsolverUtilsTest, GetSolutionMovesForStateComplexShuffle2)
+{
+	// Returns cube state with one U+ performed on solved cube
+	CubeStateInColors cubeStateInColors = CreateNonDefaultCubeStateSeq2();
+	CubeStateInUFRDBL currentState = "DB LU DF DR BR LF UF UB BL UR RF LD UFR RBU LDF ULF DRF BRD BLU LBD";
+	EXPECT_EQ(currentState, m_rsolverUtils->GetCubeStateInUFRDBL(cubeStateInColors));
+	std::string expectedSolution = "U3 D1 B3 U2 R1 B2 U3 R2 L2 U3 L3 B2 U3 R2 U3 L2 U3 F2 D1 F2 U2 F2 U2 F2 L2 U2 F2 L2 F2 U2 R2 D2 F2";
 	// The algorithm implementation is deterministic, so it is safe to always expect same solution for a given input
 	EXPECT_EQ(expectedSolution, m_rsolverUtils->SolveCubeFromGivenState(currentState));
 }
