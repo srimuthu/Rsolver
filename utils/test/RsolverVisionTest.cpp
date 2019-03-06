@@ -36,5 +36,9 @@ TEST_F(RsolverVisionTest, CaptureImageFromSensor)
 	}
 }
 
+TEST_F(RsolverVisionTest, GetImagesForTesting)
+{
+	m_rsolverVision->CalibrateCubeCameraDistance(true);
+}
 }
 }
