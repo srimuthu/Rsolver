@@ -1,4 +1,5 @@
 #include "RsolverVision.h"
+#include "RsolverHelpers.h"
 
 namespace Rsolver {
 	RsolverVision::RsolverVision()
@@ -6,6 +7,8 @@ namespace Rsolver {
 		,m_height(g_defaultHeight)
 	{
 		SetCaptureDimensions(m_width, m_height);
+		CreateCubiesPositions();
+		InitializeDefaultColorBoundaries();
 	}
 
 	RsolverVision::~RsolverVision()
@@ -24,12 +27,19 @@ namespace Rsolver {
 		}
 		m_videoCapture.release();
 		return image;
-		
+
 	}
 
-	CubeStateInColors RsolverVision::GetCubeStateInColorsFromImage(const cv::Mat & image)
+	CubeFaceInfo RsolverVision::GetCubeFaceInfoColorsFromImage(const cv::Mat & faceImage)
 	{
-		return CubeStateInColors();
+		CubeFaceInfo cubeFaceInfo;
+		for (auto i = 0; i < g_cubiesPerFace; i++)
+		{
+			cv::Mat cubie = GetCubieAtIndex(faceImage, i);
+			cubeFaceInfo.faceColorVector.emplace_back(DetectColorOfCubie(cubie));
+		}
+		cubeFaceInfo.cubeFace = Helpers::GetDefaultCubeFaceForColor(cubeFaceInfo.faceColorVector.at(g_centerCubieIndex));
+		return cubeFaceInfo;
 	}
 
 	void RsolverVision::CalibrateCubeCameraDistance(bool testCapture)
@@ -82,7 +92,8 @@ namespace Rsolver {
 		m_videoCapture.set(cv::CAP_PROP_FRAME_WIDTH, width);
 		m_videoCapture.set(cv::CAP_PROP_FRAME_HEIGHT, height);
 	}
-	void RsolverVision::OverlayCubiesExpectedPositionOnImage(cv::Mat & image)
+
+	void RsolverVision::CreateCubiesPositions()
 	{
 		auto overlay = CubeOverlayDefaults();
 		cv::Rect cubie;
@@ -90,11 +101,108 @@ namespace Rsolver {
 		{
 			for (auto j = 0; j < 3; j++)
 			{
-				cubie = cv::Rect(overlay.xPosTopLeft + (i*overlay.cubieSizeInPix) + (overlay.toleranceInPix/2), 
-								overlay.yPosTopLeft + (j*overlay.cubieSizeInPix) + (overlay.toleranceInPix /2),
-								overlay.cubieSizeInPix - overlay.toleranceInPix, 
-								overlay.cubieSizeInPix - overlay.toleranceInPix);
-				cv::rectangle(image, cubie, cv::Scalar(255, 0, 0), 4);
+				cubie = cv::Rect(overlay.xPosTopLeft + (j*overlay.cubieSizeInPix) + (overlay.toleranceInPix / 2),
+					overlay.yPosTopLeft + (i*overlay.cubieSizeInPix) + (overlay.toleranceInPix / 2),
+					overlay.cubieSizeInPix - overlay.toleranceInPix,
+					overlay.cubieSizeInPix - overlay.toleranceInPix);
+				m_cubiesPos.emplace_back(cubie);
+			}
+		}
+	}
+
+	void RsolverVision::OverlayCubiesExpectedPositionOnImage(cv::Mat & image)
+	{
+		for (auto const& cubie : m_cubiesPos)
+		{
+			cv::rectangle(image, cubie, cv::Scalar(255, 0, 0), 4);
+		}
+	}
+
+	void RsolverVision::InitializeDefaultColorBoundaries()
+	{
+		for (auto i = 0; i < g_numFaces; i++)
+		{
+			ColorBoundaries colorBoundaries(static_cast<Colors>(i));
+			m_colorBoundariesVec.emplace_back(colorBoundaries);
+		}
+	}
+
+	BgrMinMax RsolverVision::GetBgrMinMaxFromCubie(const cv::Mat & image)
+	{
+		std::vector<cv::Mat> bgrPlanes(3);
+		cv::split(image, bgrPlanes);
+
+		int histSize = 256;
+		float range[] = { 0, 256 };
+		const float* histRange = { range };
+		bool uniform = true, accumulate = false;
+
+		cv::Mat bHist, gHist, rHist;
+		cv::calcHist(&bgrPlanes[0], 1, 0, cv::Mat(), bHist, 1, &histSize, &histRange, uniform, accumulate);
+		cv::calcHist(&bgrPlanes[1], 1, 0, cv::Mat(), gHist, 1, &histSize, &histRange, uniform, accumulate);
+		cv::calcHist(&bgrPlanes[2], 1, 0, cv::Mat(), rHist, 1, &histSize, &histRange, uniform, accumulate);
+		BgrMinMax bgrMinMax;
+		double minVal, maxVal;
+		cv::Point minLoc, maxLoc;
+		cv::minMaxLoc(bHist, &minVal, &maxVal, &minLoc, &maxLoc);
+		bgrMinMax.bMin = maxLoc.y - g_histTolerance;
+		bgrMinMax.bMax = maxLoc.y + g_histTolerance;
+		cv::minMaxLoc(gHist, &minVal, &maxVal, &minLoc, &maxLoc);
+		bgrMinMax.gMin = maxLoc.y - g_histTolerance;
+		bgrMinMax.gMax = maxLoc.y + g_histTolerance;
+		cv::minMaxLoc(rHist, &minVal, &maxVal, &minLoc, &maxLoc);
+		bgrMinMax.rMin = maxLoc.y - g_histTolerance;
+		bgrMinMax.rMax = maxLoc.y + g_histTolerance;
+
+		return bgrMinMax;
+	}
+
+	std::vector<ColorBoundaries> RsolverVision::GetColorBoundariesVector()
+	{
+		return m_colorBoundariesVec;
+	}
+
+	cv::Mat RsolverVision::GetCubieAtIndex(const cv::Mat& inputImage, int index)
+	{
+		if (index >= g_cubiesPerFace)
+		{
+			throw(std::runtime_error("Invalid cubie index, cubie index must be less than " + std::to_string(g_cubiesPerFace)));
+		}
+		cv::Mat copyOfInputImage;
+		inputImage.copyTo(copyOfInputImage);
+		cv::Mat croppedCubie = copyOfInputImage(m_cubiesPos.at(index));
+		cv::Mat croppedCubieGB;
+		cv::GaussianBlur(croppedCubie, croppedCubieGB, cv::Size(7, 7), 0, 0);
+		return croppedCubieGB;
+	}
+
+	Colors RsolverVision::DetectColorOfCubie(const cv::Mat & cubie)
+	{
+		BgrMinMax bgrMinMax = GetBgrMinMaxFromCubie(cubie);
+		double bMean = (bgrMinMax.bMin + bgrMinMax.bMax) / 2;
+		double gMean = (bgrMinMax.gMin + bgrMinMax.gMax) / 2;
+		double rMean = (bgrMinMax.rMin + bgrMinMax.rMax) / 2;
+		for (auto const& cb : m_colorBoundariesVec)
+		{
+			if ((bMean <= cb.bgrMinMax.bMax) && (bMean >= cb.bgrMinMax.bMin) &&
+				(gMean <= cb.bgrMinMax.gMax) && (gMean >= cb.bgrMinMax.gMin) &&
+				(rMean <= cb.bgrMinMax.rMax) && (rMean >= cb.bgrMinMax.rMin))
+			{
+				return cb.color;
+			}
+		}
+		throw(std::runtime_error("Unable to identify the color of the cubie! Try recalibration"));
+	}
+
+	void RsolverVision::CalibrateBoundariesByFaceColor(const cv::Mat & faceImage, Colors color)
+	{
+		cv::Mat centerCubie = GetCubieAtIndex(faceImage, g_centerCubieIndex);
+		// Given the face color (of the center cubie) calibrate boundaries for that color
+		for (auto& cb : m_colorBoundariesVec)
+		{
+			if (cb.color == color)
+			{
+				cb.bgrMinMax = GetBgrMinMaxFromCubie(centerCubie);
 			}
 		}
 	}
