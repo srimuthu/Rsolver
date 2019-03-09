@@ -8,11 +8,10 @@ class IRsolverVision
 {
 	public:
 	virtual ~IRsolverVision() = default;
-	
-	virtual cv::Mat CaptureImageFromSensor() = 0;
-	virtual CubeStateInColors GetCubeStateInColorsFromImage(const cv::Mat& image) = 0;
-	virtual void CalibrateCubeCameraDistance(bool testCapture) = 0;
 
+	virtual cv::Mat CaptureImageFromSensor() = 0;
+	virtual CubeFaceInfo GetCubeFaceInfoColorsFromImage(const cv::Mat& image) = 0;
+	virtual void CalibrateCubeCameraDistance(bool testCapture) =  0;
 };
 }
 
