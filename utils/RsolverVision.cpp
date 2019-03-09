@@ -127,7 +127,7 @@ namespace Rsolver {
 		}
 	}
 
-	BgrMinMax RsolverVision::GetBgrMinMaxFromCubie(const cv::Mat & image)
+	BgrVal RsolverVision::GetbgrValFromCubie(const cv::Mat & image)
 	{
 		std::vector<cv::Mat> bgrPlanes(3);
 		cv::split(image, bgrPlanes);
@@ -141,20 +141,17 @@ namespace Rsolver {
 		cv::calcHist(&bgrPlanes[0], 1, 0, cv::Mat(), bHist, 1, &histSize, &histRange, uniform, accumulate);
 		cv::calcHist(&bgrPlanes[1], 1, 0, cv::Mat(), gHist, 1, &histSize, &histRange, uniform, accumulate);
 		cv::calcHist(&bgrPlanes[2], 1, 0, cv::Mat(), rHist, 1, &histSize, &histRange, uniform, accumulate);
-		BgrMinMax bgrMinMax;
+		BgrVal bgrVal;
 		double minVal, maxVal;
 		cv::Point minLoc, maxLoc;
 		cv::minMaxLoc(bHist, &minVal, &maxVal, &minLoc, &maxLoc);
-		bgrMinMax.bMin = maxLoc.y - g_histTolerance;
-		bgrMinMax.bMax = maxLoc.y + g_histTolerance;
+		bgrVal.bVal = maxLoc.y;
 		cv::minMaxLoc(gHist, &minVal, &maxVal, &minLoc, &maxLoc);
-		bgrMinMax.gMin = maxLoc.y - g_histTolerance;
-		bgrMinMax.gMax = maxLoc.y + g_histTolerance;
+		bgrVal.gVal = maxLoc.y;
 		cv::minMaxLoc(rHist, &minVal, &maxVal, &minLoc, &maxLoc);
-		bgrMinMax.rMin = maxLoc.y - g_histTolerance;
-		bgrMinMax.rMax = maxLoc.y + g_histTolerance;
+		bgrVal.rVal = maxLoc.y;
 
-		return bgrMinMax;
+		return bgrVal;
 	}
 
 	std::vector<ColorBoundaries> RsolverVision::GetColorBoundariesVector()
@@ -178,15 +175,12 @@ namespace Rsolver {
 
 	Colors RsolverVision::DetectColorOfCubie(const cv::Mat & cubie)
 	{
-		BgrMinMax bgrMinMax = GetBgrMinMaxFromCubie(cubie);
-		double bMean = (bgrMinMax.bMin + bgrMinMax.bMax) / 2;
-		double gMean = (bgrMinMax.gMin + bgrMinMax.gMax) / 2;
-		double rMean = (bgrMinMax.rMin + bgrMinMax.rMax) / 2;
+		BgrVal bgrVal = GetbgrValFromCubie(cubie);
 		for (auto const& cb : m_colorBoundariesVec)
 		{
-			if ((bMean <= cb.bgrMinMax.bMax) && (bMean >= cb.bgrMinMax.bMin) &&
-				(gMean <= cb.bgrMinMax.gMax) && (gMean >= cb.bgrMinMax.gMin) &&
-				(rMean <= cb.bgrMinMax.rMax) && (rMean >= cb.bgrMinMax.rMin))
+			if ((bgrVal.bVal <= (cb.bgrVal.bVal + g_histTolerance)) && (bgrVal.bVal >= (cb.bgrVal.bVal - g_histTolerance)) &&
+				(bgrVal.gVal <= (cb.bgrVal.gVal + g_histTolerance)) && (bgrVal.gVal >= (cb.bgrVal.gVal - g_histTolerance)) &&
+				(bgrVal.rVal <= (cb.bgrVal.rVal + g_histTolerance)) && (bgrVal.rVal >= (cb.bgrVal.rVal - g_histTolerance)))
 			{
 				return cb.color;
 			}
@@ -202,7 +196,7 @@ namespace Rsolver {
 		{
 			if (cb.color == color)
 			{
-				cb.bgrMinMax = GetBgrMinMaxFromCubie(centerCubie);
+				cb.bgrVal = GetbgrValFromCubie(centerCubie);
 			}
 		}
 	}

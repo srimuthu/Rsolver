@@ -73,22 +73,16 @@ struct CubeState
 	std::map<std::string, CornerCube> cornerMap;
 };
 
-struct BgrMinMax
+struct BgrVal
 {
-	BgrMinMax()
-	:bMin(0)
-	, bMax(0)
-	, gMin(0)
-	, gMax(0)
-	, rMin(0)
-	, rMax(0)
+	BgrVal()
+	:bVal(0)
+	, gVal(0)
+	, rVal(0)
 	{}
-	double bMin;
-	double bMax;
-	double gMin;
-	double gMax;
-	double rMin;
-	double rMax;
+	double bVal;
+	double gVal;
+	double rVal;
 };
 
 struct ColorBoundaries
@@ -100,7 +94,7 @@ struct ColorBoundaries
 		:color(color)
 	{}
 	Colors color;
-	BgrMinMax bgrMinMax;
+	BgrVal bgrVal;
 
 };
 

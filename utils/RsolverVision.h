@@ -45,7 +45,7 @@ class RsolverVision : public IRsolverVision
 		void CreateCubiesPositions();
 		void OverlayCubiesExpectedPositionOnImage(cv::Mat& image);
 		void InitializeDefaultColorBoundaries();
-		BgrMinMax GetBgrMinMaxFromCubie(const cv::Mat& image);
+		BgrVal GetbgrValFromCubie(const cv::Mat& image);
 
 
 		int										m_width;
