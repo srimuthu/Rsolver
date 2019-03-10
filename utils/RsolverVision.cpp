@@ -56,7 +56,7 @@ namespace Rsolver {
 			}
 			originalFrame.copyTo(overlayFrame);
 			OverlayCubiesExpectedPositionOnImage(overlayFrame);
-			cv::imshow("Live", overlayFrame);
+			cv::imshow("Calibrate cube camera distance", overlayFrame);
 			int key = cv::waitKey(5);
 			key = (key == 255) ? -1 : key;
 			if (key >= 0)
@@ -127,10 +127,12 @@ namespace Rsolver {
 		}
 	}
 
-	BgrVal RsolverVision::GetbgrValFromCubie(const cv::Mat & image)
+	LabVal RsolverVision::GetLabValFromCubie(const cv::Mat & image)
 	{
-		std::vector<cv::Mat> bgrPlanes(3);
-		cv::split(image, bgrPlanes);
+		cv::Mat imageLab;
+		cv::cvtColor(image, imageLab, cv::COLOR_BGR2Lab);
+		std::vector<cv::Mat> labPlanes(3);
+		cv::split(imageLab, labPlanes);
 
 		int histSize = 256;
 		float range[] = { 0, 256 };
@@ -138,20 +140,20 @@ namespace Rsolver {
 		bool uniform = true, accumulate = false;
 
 		cv::Mat bHist, gHist, rHist;
-		cv::calcHist(&bgrPlanes[0], 1, 0, cv::Mat(), bHist, 1, &histSize, &histRange, uniform, accumulate);
-		cv::calcHist(&bgrPlanes[1], 1, 0, cv::Mat(), gHist, 1, &histSize, &histRange, uniform, accumulate);
-		cv::calcHist(&bgrPlanes[2], 1, 0, cv::Mat(), rHist, 1, &histSize, &histRange, uniform, accumulate);
-		BgrVal bgrVal;
+		cv::calcHist(&labPlanes[0], 1, 0, cv::Mat(), bHist, 1, &histSize, &histRange, uniform, accumulate);
+		cv::calcHist(&labPlanes[1], 1, 0, cv::Mat(), gHist, 1, &histSize, &histRange, uniform, accumulate);
+		cv::calcHist(&labPlanes[2], 1, 0, cv::Mat(), rHist, 1, &histSize, &histRange, uniform, accumulate);
+		LabVal labVal;
 		double minVal, maxVal;
 		cv::Point minLoc, maxLoc;
 		cv::minMaxLoc(bHist, &minVal, &maxVal, &minLoc, &maxLoc);
-		bgrVal.bVal = maxLoc.y;
+		labVal.lVal = maxLoc.y;
 		cv::minMaxLoc(gHist, &minVal, &maxVal, &minLoc, &maxLoc);
-		bgrVal.gVal = maxLoc.y;
+		labVal.aVal = maxLoc.y;
 		cv::minMaxLoc(rHist, &minVal, &maxVal, &minLoc, &maxLoc);
-		bgrVal.rVal = maxLoc.y;
+		labVal.bVal = maxLoc.y;
 
-		return bgrVal;
+		return labVal;
 	}
 
 	std::vector<ColorBoundaries> RsolverVision::GetColorBoundariesVector()
@@ -175,12 +177,12 @@ namespace Rsolver {
 
 	Colors RsolverVision::DetectColorOfCubie(const cv::Mat & cubie)
 	{
-		BgrVal bgrVal = GetbgrValFromCubie(cubie);
+		LabVal labVal = GetLabValFromCubie(cubie);
 		for (auto const& cb : m_colorBoundariesVec)
 		{
-			if ((bgrVal.bVal <= (cb.bgrVal.bVal + g_histTolerance)) && (bgrVal.bVal >= (cb.bgrVal.bVal - g_histTolerance)) &&
-				(bgrVal.gVal <= (cb.bgrVal.gVal + g_histTolerance)) && (bgrVal.gVal >= (cb.bgrVal.gVal - g_histTolerance)) &&
-				(bgrVal.rVal <= (cb.bgrVal.rVal + g_histTolerance)) && (bgrVal.rVal >= (cb.bgrVal.rVal - g_histTolerance)))
+			// Compare A and B components in LAB colorspace
+			if ((labVal.aVal <= (cb.labVal.aVal + g_histTolerance)) && (labVal.aVal >= (cb.labVal.aVal - g_histTolerance)) &&
+				(labVal.bVal <= (cb.labVal.bVal + g_histTolerance)) && (labVal.bVal >= (cb.labVal.bVal - g_histTolerance)))
 			{
 				return cb.color;
 			}
@@ -196,7 +198,7 @@ namespace Rsolver {
 		{
 			if (cb.color == color)
 			{
-				cb.bgrVal = GetbgrValFromCubie(centerCubie);
+				cb.labVal = GetLabValFromCubie(centerCubie);
 			}
 		}
 	}

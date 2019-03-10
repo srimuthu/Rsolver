@@ -43,6 +43,13 @@ struct CubeFaceInfo {
 	CubeFaceInfo(CubeFaces face)
 		:cubeFace(face)
 	{}
+
+	bool operator==(const CubeFaceInfo& right)const
+	{
+		return ((cubeFace == right.cubeFace) &&
+			(faceColorVector == right.faceColorVector));
+	}
+
 	CubeFaces cubeFace;
 	FaceColorVector faceColorVector;
 };
@@ -73,16 +80,16 @@ struct CubeState
 	std::map<std::string, CornerCube> cornerMap;
 };
 
-struct BgrVal
+struct LabVal
 {
-	BgrVal()
-	:bVal(0)
-	, gVal(0)
-	, rVal(0)
+	LabVal()
+	:lVal(0)
+	, aVal(0)
+	, bVal(0)
 	{}
+	double lVal;
+	double aVal;
 	double bVal;
-	double gVal;
-	double rVal;
 };
 
 struct ColorBoundaries
@@ -94,7 +101,7 @@ struct ColorBoundaries
 		:color(color)
 	{}
 	Colors color;
-	BgrVal bgrVal;
+	LabVal labVal;
 
 };
 

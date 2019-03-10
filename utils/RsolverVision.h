@@ -7,7 +7,7 @@ namespace Rsolver {
 const int g_defaultWidth = 640;
 const int g_defaultHeight = 480;
 const int g_centerCubieIndex = 4;
-const int g_histTolerance = 35;
+const int g_histTolerance = 20;
 
 struct CubeOverlayDefaults
 {
@@ -15,7 +15,7 @@ struct CubeOverlayDefaults
 		: xPosTopLeft(140)
 		, yPosTopLeft(60)
 		, cubieSizeInPix(120)
-		, toleranceInPix(60)
+		, toleranceInPix(80)
 	{}
 	int xPosTopLeft;
 	int yPosTopLeft;
@@ -45,7 +45,7 @@ class RsolverVision : public IRsolverVision
 		void CreateCubiesPositions();
 		void OverlayCubiesExpectedPositionOnImage(cv::Mat& image);
 		void InitializeDefaultColorBoundaries();
-		BgrVal GetbgrValFromCubie(const cv::Mat& image);
+		LabVal GetLabValFromCubie(const cv::Mat& image);
 
 
 		int										m_width;
