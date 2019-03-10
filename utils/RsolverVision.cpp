@@ -42,7 +42,7 @@ namespace Rsolver {
 		return cubeFaceInfo;
 	}
 
-	void RsolverVision::CalibrateCubeCameraDistance(bool testCapture)
+	void RsolverVision::CalibrateCubeCameraDistanceGUI(bool testCapture)
 	{
 		cv::Mat originalFrame, overlayFrame;
 		int keycount = 0;
@@ -190,7 +190,7 @@ namespace Rsolver {
 		throw(std::runtime_error("Unable to identify the color of the cubie! Try recalibration"));
 	}
 
-	void RsolverVision::CalibrateBoundariesByFaceColor(const cv::Mat & faceImage, Colors color)
+	void RsolverVision::PerformBoundariesCalibrationByFaceColor(const cv::Mat & faceImage, Colors color)
 	{
 		cv::Mat centerCubie = GetCubieAtIndex(faceImage, g_centerCubieIndex);
 		// Given the face color (of the center cubie) calibrate boundaries for that color

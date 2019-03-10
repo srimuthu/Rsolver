@@ -31,13 +31,13 @@ class RsolverVision : public IRsolverVision
 
 		virtual cv::Mat CaptureImageFromSensor() override;
 		virtual CubeFaceInfo GetCubeFaceInfoColorsFromImage(const cv::Mat& image) override;
-		virtual void CalibrateCubeCameraDistance(bool testCapture) override;
+		virtual void CalibrateCubeCameraDistanceGUI(bool testCapture) override;
+		virtual void PerformBoundariesCalibrationByFaceColor(const cv::Mat& faceImage, Colors color) override;
 
 		// Non-interface public methods
 		std::vector<ColorBoundaries> GetColorBoundariesVector();
 		cv::Mat GetCubieAtIndex(const cv::Mat& inputImage, int index);
 		Colors DetectColorOfCubie(const cv::Mat& cubie);
-		void CalibrateBoundariesByFaceColor(const cv::Mat& faceImage, Colors color);
 
 	private:
 		void OpenVideoCapture();

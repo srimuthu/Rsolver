@@ -3,7 +3,8 @@
 #include <memory>
 
 #include "RsolverVision.h"
-#include "opencv2/highgui.hpp"
+#include "RsolverUtils.h"
+#include "RsolverHelpers.h"
 
 namespace Rsolver
 {
@@ -12,17 +13,21 @@ namespace Test
 
 using namespace testing;
 const bool g_debugImages = true;
+static const Rsolver::CubeStateInUFRDBL g_solutionState = "UF UR UB UL DF DR DB DL FR FL BR BL UFR URB UBL ULF DRF DFL DLB DBR";
 #ifdef _WIN32
 static const std::string g_testDataFilesPath = "..\\..\\..\\rsolver\\data\\test_data\\";
+static const std::string g_cubeStatesTxtFile = "..\\..\\..\\rsolver\\data\\CubeStates.txt";
 #else
 static const std::string g_testDataFilesPath = "../../../rsolver/data/test_data/";
+static const std::string g_cubeStatesTxtFile = "../../../rsolver/data/CubeStates.txt";
 #endif
 
-class RsolverVisionTest : public testing::Test
+class RsolverIntegrationTest : public testing::Test
 {
 public:
 	void SetUp() override
 	{
+		m_rsolverUtils = std::make_unique<RsolverUtils>(g_solutionState, g_cubeStatesTxtFile);
 		m_rsolverVision = std::make_unique<RsolverVision>();
 	}
 
@@ -105,48 +110,13 @@ public:
 		return stateInColors;
 	}
 
-	std::unique_ptr<RsolverVision>	m_rsolverVision;
+	std::unique_ptr<IRsolverVision>	m_rsolverVision;
+	std::unique_ptr<IRsolverUtils>	m_rsolverUtils;
 };
 
-TEST_F(RsolverVisionTest, DISABLED_CaptureImageFromSensor)
+TEST_F(RsolverIntegrationTest, GetSolutionForTestDataImages)
 {
-	// Enable this test to check if camera works
-	auto img = m_rsolverVision->CaptureImageFromSensor();
-	EXPECT_EQ(g_defaultHeight, img.size().height);
-	EXPECT_EQ(g_defaultWidth, img.size().width);
-	if (g_debugImages)
-	{
-		cv::imshow("Sample", img);
-		cv::waitKey(0);
-	}
-}
-
-TEST_F(RsolverVisionTest, DISABLED_GetImagesForTesting)
-{
-	// Enable this test to capture new test data
-	m_rsolverVision->CalibrateCubeCameraDistanceGUI(true);
-}
-
-
-TEST_F(RsolverVisionTest, DISABLED_WriteCubiesToDisk)
-{
-	// Enable this test to see if the cubies are being cropped properly
-	for (int i = 0; i < 6; i++)
-	{
-		std::string inputFileName = "cube_" + std::to_string(i) + ".png";
-		cv::Mat img = cv::imread(inputFileName);
-		for (auto j = 0; j < g_cubiesPerFace; j++)
-		{
-			cv::Mat cubieImage = m_rsolverVision->GetCubieAtIndex(img, j);
-			std::string outputFileName = "face_" + std::to_string(i) + "_cubie_" + std::to_string(j) + ".png";
-			cv::imwrite(outputFileName, cubieImage);
-		}
-	}
-}
-
-TEST_F(RsolverVisionTest, CalibrateBoundariesForTestDataImages)
-{
-	// Read from the disk
+	// Perform Calibration from Test Images
 	for (int i = 0; i < 6; i++)
 	{
 		std::string inputFileName = g_testDataFilesPath + "cube_" + std::to_string(i) + ".png";
@@ -154,7 +124,7 @@ TEST_F(RsolverVisionTest, CalibrateBoundariesForTestDataImages)
 		m_rsolverVision->PerformBoundariesCalibrationByFaceColor(img, static_cast<Colors>(i));
 	}
 
-	// Read from the disk
+	// Identify colors of cubies in Test Images
 	CubeStateInColors cubeStateInColorsActual;
 	for (int i = 0; i < 6; i++)
 	{
@@ -167,6 +137,11 @@ TEST_F(RsolverVisionTest, CalibrateBoundariesForTestDataImages)
 	CubeStateInColors cubeStateInColorsExpected = GetExpectedCubeStateInColorsForTestData();
 
 	EXPECT_EQ(cubeStateInColorsActual, cubeStateInColorsExpected);
+
+	std::string expectedSolution = "D3 L1 F3 D3 L3 F2 R1 U1 B2 D1 F2 R3 R2 U1 R2 U3 F2 R2 U3 R2 D1 F2 U3 L2 B2 L2 F2 U2 R2 D2 F2 D2 L2";
+	// The algorithm implementation is deterministic, so it is safe to always expect same solution for a given input
+	auto cubeStateInUfrdbl = m_rsolverUtils->GetCubeStateInUFRDBL(cubeStateInColorsActual);
+	EXPECT_EQ(expectedSolution, m_rsolverUtils->SolveCubeFromGivenState(cubeStateInUfrdbl));
 }
 
 }
