@@ -55,6 +55,32 @@ namespace Rsolver {
 			}
 		}
 
+		std::string ColorToString(Colors color)
+		{
+			switch (color)
+			{
+			case Colors::Blue: return "Blue";
+			case Colors::White: return "White";
+			case Colors::Green: return "Green";
+			case Colors::Orange: return "Orange";
+			case Colors::Red: return "Red";
+			case Colors::Yellow: return "Yellow";
+			default: throw std::runtime_error("Invalid color");
+			}
+		}
+
+		void PrintCubeStateInColorsToConsole(CubeStateInColors cubeStateInColors)
+		{
+			for (auto const& face : cubeStateInColors)
+			{
+				for (auto const& cubie : face.faceColorVector)
+				{
+					std::cout << ColorToString(cubie) << "\t";
+				}
+				std::cout << std::endl;
+			}
+		}
+
 		FaceColorVector GetDefaultFaceColorVectorForColor(Colors color)
 		{
 			FaceColorVector faceColorVector;
@@ -137,7 +163,7 @@ namespace Rsolver {
 		{
 			switch (type)
 			{
-			case CubeType::Edge: 
+			case CubeType::Edge:
 			{
 				auto edgeMap = cubeState.edgeMap;
 				for (auto const& entry : edgeMap)
@@ -149,7 +175,7 @@ namespace Rsolver {
 				}
 				throw std::runtime_error("orientation not found! "+ orientation);
 			}
-			case CubeType::Corner: 
+			case CubeType::Corner:
 			{
 				auto cornerMap = cubeState.cornerMap;
 				for (auto const& entry : cornerMap)

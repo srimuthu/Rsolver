@@ -2,6 +2,7 @@
 #include <gmock/gmock.h>
 #include <memory>
 
+#include "RsolverHelpers.h"
 #include "RsolverVision.h"
 #include "opencv2/highgui.hpp"
 
@@ -167,6 +168,11 @@ TEST_F(RsolverVisionTest, CalibrateBoundariesForTestDataImages)
 	CubeStateInColors cubeStateInColorsExpected = GetExpectedCubeStateInColorsForTestData();
 
 	EXPECT_EQ(cubeStateInColorsActual, cubeStateInColorsExpected);
+
+	if (g_debugImages)
+	{
+		Helpers::PrintCubeStateInColorsToConsole(cubeStateInColorsActual);
+	}
 }
 
 }

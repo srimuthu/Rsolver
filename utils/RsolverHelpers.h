@@ -8,8 +8,11 @@ namespace Rsolver {
 	{
 		Colors GetDefaultColorForCubeFace(CubeFaces cubeFace);
 		CubeFaces GetDefaultCubeFaceForColor(Colors color);
-		
+
 		std::string GetLetterForCubeFace(CubeFaces cubeFace);
+		std::string ColorToString(Colors color);
+
+		void PrintCubeStateInColorsToConsole(CubeStateInColors cubeStateInColors);
 
 		FaceColorVector GetDefaultFaceColorVectorForColor(Colors color);
 		CubeStateInColors GetDefaultSolvedCubeStateInColors();
