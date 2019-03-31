@@ -29,7 +29,7 @@ enum class Colors {
 	Orange
 };
 
-enum class CubeType {
+enum class CubieType {
 	Edge,
 	Corner
 };

@@ -18,8 +18,8 @@ namespace Rsolver {
 		CubeStateInColors GetDefaultSolvedCubeStateInColors();
 
 		CubeState ParseCubeStatesTxtFile(const std::string& filename);
-		std::string GetOrientationForKey(const CubeState& cubeState, const std::string& key, CubeType type);
-		std::string GetKeyForOrientation(const CubeState& cubeState, const std::string& orientation, CubeType type);
+		std::string GetOrientationForKey(const CubeState& cubeState, const std::string& key, CubieType type);
+		std::string GetKeyForOrientation(const CubeState& cubeState, const std::string& orientation, CubieType type);
 
 		bool IsTokenAnEdge(const std::string& token);
 

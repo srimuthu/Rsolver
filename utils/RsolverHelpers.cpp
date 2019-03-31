@@ -149,21 +149,21 @@ namespace Rsolver {
 			return cubeState;
 		}
 
-		std::string GetOrientationForKey(const CubeState & cubeState, const std::string& key, CubeType type)
+		std::string GetOrientationForKey(const CubeState & cubeState, const std::string& key, CubieType type)
 		{
 			switch (type)
 			{
-			case CubeType::Edge: return cubeState.edgeMap.find(key)->second.edgeCubeOrientationId;
-			case CubeType::Corner:return cubeState.cornerMap.find(key)->second.cornerCubeOrientationId;
+			case CubieType::Edge: return cubeState.edgeMap.find(key)->second.edgeCubeOrientationId;
+			case CubieType::Corner:return cubeState.cornerMap.find(key)->second.cornerCubeOrientationId;
 			default: throw std::runtime_error("Invalid cube type!");
 			}
 		}
 
-		std::string GetKeyForOrientation(const CubeState & cubeState, const std::string& orientation, CubeType type)
+		std::string GetKeyForOrientation(const CubeState & cubeState, const std::string& orientation, CubieType type)
 		{
 			switch (type)
 			{
-			case CubeType::Edge:
+			case CubieType::Edge:
 			{
 				auto edgeMap = cubeState.edgeMap;
 				for (auto const& entry : edgeMap)
@@ -175,7 +175,7 @@ namespace Rsolver {
 				}
 				throw std::runtime_error("orientation not found! "+ orientation);
 			}
-			case CubeType::Corner:
+			case CubieType::Corner:
 			{
 				auto cornerMap = cubeState.cornerMap;
 				for (auto const& entry : cornerMap)

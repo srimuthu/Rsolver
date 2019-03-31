@@ -27,6 +27,10 @@ include_directories (.)
 
 # The following step has already been performed for UNIX from top level Cmakelists
 if (MSVC)
+	set(OpenCV_INCLUDE_DIRS 
+	"D:/Program Files/opencv310/opencv/build/include")
+	set(OpenCV_LIBS 
+	"D:/Program Files/opencv310/opencv/build/x64/vc14/lib/opencv_world310d.lib")
 	message(STATUS "    libraries: ${OpenCV_LIBS}")
 	message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
 	include_directories(${OpenCV_INCLUDE_DIRS})
