@@ -22,6 +22,7 @@ class Rsolver
     private:
 
         String DoActionOnIncomingMessage();
+        void AcknowledgeIncomingMessage(void);
 
         void ConstructMotorCommand(int grippers, int sliders);
         char GetCharForMotorCommand(int command);
@@ -30,6 +31,7 @@ class Rsolver
         int m_baud;
         int m_ledPin;
         int m_msg[MSG_SIZE];
+        int m_cmdCount;
         String m_defaultNoActionCommand;
         String m_outputCommand;
 

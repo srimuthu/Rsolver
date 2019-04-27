@@ -6,6 +6,7 @@ Rsolver::Rsolver(int baud)
     m_msg[0] = NO_PENDING;
     m_defaultNoActionCommand = "XXXXXXXX";
     m_outputCommand = m_defaultNoActionCommand;
+    m_cmdCount = 0;
 }
 
 void Rsolver::SetLed(int ledPin)
@@ -34,14 +35,22 @@ String Rsolver::DoActionOnIncomingMessage()
         case BLINK_LED:
             BlinkLed(m_msg[1], m_msg[2]);
             m_msg[0] = NO_PENDING;
+            AcknowledgeIncomingMessage();
             return m_defaultNoActionCommand;
         case SET_MOTORS:
             ConstructMotorCommand(m_msg[1], m_msg[2]);
             m_msg[0] = NO_PENDING;
+            AcknowledgeIncomingMessage();
             return m_outputCommand;
         default:
             return m_defaultNoActionCommand;
     }
+}
+
+void Rsolver::AcknowledgeIncomingMessage()
+{
+    m_cmdCount++;
+    Serial.println(m_cmdCount, DEC);
 }
 
 void Rsolver::ConstructMotorCommand(int grippers, int sliders)

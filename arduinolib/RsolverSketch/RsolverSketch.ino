@@ -35,6 +35,7 @@ void setup() {
   pwm.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
   delay(1000);
   PowerOnSelfTest();
+  Serial.println("Ready");
 }
 
 void Extend(int motor)
@@ -55,7 +56,7 @@ void SetMotorStates(String stateArray)
     else if(stateArray.charAt(i)=='N') Neutral(i);
     else if(stateArray.charAt(i)=='E') Extend(i);
   }
-  delay(1000);
+  delay(500);
 }
 
 void PowerOnSelfTest()

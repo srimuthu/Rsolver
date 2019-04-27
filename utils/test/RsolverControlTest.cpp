@@ -35,14 +35,7 @@ public:
 
 TEST_F(RsolverControlTest, TestControlCreation)
 {
-	std::vector<RobotCommand> commands;
-	commands.emplace_back(m_rsolverControl->Extend(Rsolver::Motors::TopSlide));
-	commands.emplace_back(m_rsolverControl->Neutral(Rsolver::Motors::TopSlide));
-	commands.emplace_back(m_rsolverControl->Extend(Rsolver::Motors::BottomSlide));
-	commands.emplace_back(m_rsolverControl->Extend(Rsolver::Motors::BottomGrip));
-	commands.emplace_back(m_rsolverControl->Neutral(Rsolver::Motors::BottomSlide));
-	commands.emplace_back(m_rsolverControl->Neutral(Rsolver::Motors::BottomGrip));
-	m_rsolverControl->ExecuteRobotCommands(commands);
+	m_rsolverControl->InitializeRobot();
 }
 
 
