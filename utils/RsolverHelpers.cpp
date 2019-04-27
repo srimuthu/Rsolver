@@ -233,5 +233,17 @@ namespace Rsolver {
 			return ltrim(rtrim(s));
 		}
 
+		int ConvertControlCommand(ControlCommands command)
+		{
+			switch (command)
+			{
+			case ControlCommands::NoPending: return 0xFE;
+			case ControlCommands::BlinkLed: return 0x01;
+			case ControlCommands::SetMotors: return 0x02;
+			default:
+				throw std::runtime_error("Invalid Robot command");
+			}
+		}
+
 	}
 }

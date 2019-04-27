@@ -4,38 +4,38 @@ project (rsolver)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-# Set compiler flags and options. 
+# Set compiler flags and options.
 # Here it is setting the Visual Studio warning level to 4
 if (MSVC)
-	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
 endif (MSVC)
 if (UNIX)
-	find_package(OpenCV REQUIRED)
-	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
-	message(STATUS "OpenCV library status:")
-	message(STATUS "    version: ${OpenCV_VERSION}")
-	message(STATUS "    libraries: ${OpenCV_LIBS}")
-	message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
-	if(CMAKE_VERSION VERSION_LESS "2.8.11")
-	  # Add OpenCV headers location to your include paths
-	  include_directories(${OpenCV_INCLUDE_DIRS})
-	endif()
+    find_package(OpenCV REQUIRED)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+    message(STATUS "OpenCV library status:")
+    message(STATUS "    version: ${OpenCV_VERSION}")
+    message(STATUS "    libraries: ${OpenCV_LIBS}")
+    message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
+    if(CMAKE_VERSION VERSION_LESS "2.8.11")
+      # Add OpenCV headers location to your include paths
+      include_directories(${OpenCV_INCLUDE_DIRS})
+    endif()
 endif (UNIX)
 
 # Download and unpack googletest at configure time
-configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
-execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
-  RESULT_VARIABLE result
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
-if(result)
-  message(FATAL_ERROR "CMake step for googletest failed: ${result}")
-endif()
-execute_process(COMMAND ${CMAKE_COMMAND} --build .
-  RESULT_VARIABLE result
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
-if(result)
-  message(FATAL_ERROR "Build step for googletest failed: ${result}")
-endif()
+#configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
+#execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+#  RESULT_VARIABLE result
+#  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
+#if(result)
+#  message(FATAL_ERROR "CMake step for googletest failed: ${result}")
+#endif()
+#execute_process(COMMAND ${CMAKE_COMMAND} --build .
+#  RESULT_VARIABLE result
+#  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
+#if(result)
+#  message(FATAL_ERROR "Build step for googletest failed: ${result}")
+#endif()
 
 # Prevent overriding the parent project's compiler/linker
 # settings on Windows

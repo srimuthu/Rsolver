@@ -105,6 +105,29 @@ struct ColorBoundaries
 
 };
 
+enum class Motors {
+	BottomGrip,
+	RightGrip,
+	LeftGrip,
+	TopGrip,
+	BottomSlide,
+	RightSlide,
+	LeftSlide,
+	TopSlide
+};
+
+enum class ControlCommands {
+	NoPending,
+	BlinkLed,
+	SetMotors
+};
+
+struct RobotCommand {
+	unsigned char command;
+	unsigned char arg1;
+	unsigned char arg2;
+};
+
 }
 
 
