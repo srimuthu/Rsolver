@@ -81,8 +81,8 @@ class RobotControl(ArduinoComm):
 
     def __init__(self):
         self.arduinoComm = ArduinoComm("COM3", 9600)
-        self.gripperCmd = 0xff
-        self.sliderCmd = 0xff
+        self.gripperCmd = 0x00
+        self.sliderCmd = 0x00
 
     def __del__(self):
         self.arduinoComm.Terminate()
@@ -93,9 +93,9 @@ class RobotControl(ArduinoComm):
             return False
         motorIdx = motorDict[motor]
         if(motorIdx < 4):
-            self.gripperCmd = (0xFF ^ (1 << ((motorIdx*2) + 1)))
+            self.gripperCmd = (self.gripperCmd | (3 << (motorIdx*2)))
         else:
-            self.sliderCmd = (0xFF ^ (1 << (((motorIdx-4)*2) + 1)))
+            self.sliderCmd = (self.sliderCmd | (3 << ((motorIdx-4)*2)))
         self.TransmitCommand()
 
     def __neutral(self, motor):
@@ -104,9 +104,9 @@ class RobotControl(ArduinoComm):
             return False
         motorIdx = motorDict[motor]
         if(motorIdx < 4):
-            self.gripperCmd = (0xFF ^ (3 << (motorIdx*2)))
+            self.gripperCmd = self.gripperCmd & (0xFF ^ (3 << (motorIdx * 2)))
         else:
-            self.sliderCmd = (0xFF ^ (3 << ((motorIdx-4)*2)))
+            self.sliderCmd = self.sliderCmd & (0xFF ^ (3 << ((motorIdx - 4) * 2)))
         self.TransmitCommand()
 
     def TransmitCommand(self):

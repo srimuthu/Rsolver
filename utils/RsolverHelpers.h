@@ -10,6 +10,7 @@ namespace Rsolver {
 		CubeFaces GetDefaultCubeFaceForColor(Colors color);
 
 		std::string GetLetterForCubeFace(CubeFaces cubeFace);
+		CubeFaces GetCubeFaceForLetter(const char& letter);
 		std::string ColorToString(Colors color);
 
 		void PrintCubeStateInColorsToConsole(CubeStateInColors cubeStateInColors);
@@ -34,6 +35,8 @@ namespace Rsolver {
 
 		// Robot helpers
 		int ConvertControlCommand(ControlCommands command);
+		Motors GetSliderForCubeFace(CubeFaces face);
+		Motors GetGripperForCubeFace(CubeFaces face);
 
 	}
 }

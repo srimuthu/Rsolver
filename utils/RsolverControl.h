@@ -14,20 +14,32 @@ public:
 	virtual void InitializeRobot() override;
 	virtual std::vector<RobotCommand> GetRobotCommandsFromSolution(const std::string cubeSolution) override;
 	virtual void ExecuteRobotCommands(std::vector<RobotCommand> robotCommands) override;
+	virtual std::vector<RobotCommand> GenerateLockCubeInPlaceCommands() override;
+	virtual std::vector<RobotCommand> GeneratePrepareForCapture(CubeFaces face) override;
+	virtual std::vector<RobotCommand> GenerateRecoverFromCapture(CubeFaces face) override;
 
-
-	// Non-interface public methods (maybe move to another interface)
-	RobotCommand Extend(Motors motor);
-	RobotCommand Neutral(Motors motor);
+	// Non-interface public methods (maybe move to another interface?)
 	void ConfigureWaitForAcknowledge(bool waitForAck);
+	MoveInfo GetMoveInfoFromStringToken(const std::string& moveString);
 
 private:
 
+	RobotCommand Extend(Motors motor);
+	RobotCommand Extend(std::vector<Motors> motors);
+	RobotCommand Neutral(Motors motor);
+	RobotCommand Neutral(std::vector<Motors> motors);
+	void GenerateCommandsForMoveInfo(std::vector<RobotCommand>& commands, const MoveInfo& moveInfo);
+	std::vector<RobotCommand> GenerateStartPositionForCubeFaceMove(const MoveInfo& moveInfo);
+	std::vector<RobotCommand> GenerateCommandsForCubeFaceMove(const MoveInfo& moveInfo);
+	std::vector<RobotCommand> GenerateEndPositionForCubeFaceMove(const MoveInfo& moveInfo);
+
+	void PerformCubeFaceRotations(std::vector<RobotCommand>& commands, const MoveInfo& moveInfo);
+	void PerformOneCubeFaceRotation(std::vector<RobotCommand>& commands, CubeFaces cubeFace);
 	bool SendSerialCommand(RobotCommand command);
-	std::vector<RobotCommand> GenerateLockCubeInPlaceCommands();
+
 
 	std::unique_ptr<IRsolverSerial>		m_serial;
-	RobotCommand						m_robotCommand;
+	RobotCommand						m_robotMoveCommand;
 	int									m_responseCounter;
 	bool								m_waitForAck;
 

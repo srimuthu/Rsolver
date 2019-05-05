@@ -22,8 +22,8 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define LEFTSLIDE   6
 #define TOPSLIDE    7
 
-int neutralPos[8]   = {240, 240, 220, 230, 420, 420, 420, 420};
-int extendedPos[8]  = {445, 440, 420, 445, 210, 210, 220, 200};
+int neutralPos[8]   = {240, 240, 220, 230, 430, 430, 430, 470};
+int extendedPos[8]  = {445, 455, 420, 445, 200, 180, 220, 200};
 
 Rsolver comms(BAUD);
 String command;
@@ -56,7 +56,7 @@ void SetMotorStates(String stateArray)
     else if(stateArray.charAt(i)=='N') Neutral(i);
     else if(stateArray.charAt(i)=='E') Extend(i);
   }
-  delay(500);
+  delay(750);
 }
 
 void PowerOnSelfTest()

@@ -71,7 +71,7 @@ char Rsolver::GetCharForMotorCommand(int command)
     switch(command)
     {
         case 0: return 'N';
-        case 1: return 'E';
+        case 3: return 'E';
         default: return 'X';
     }
 }

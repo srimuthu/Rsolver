@@ -5,6 +5,8 @@
 #include "RsolverVision.h"
 #include "RsolverUtils.h"
 #include "RsolverHelpers.h"
+#include "RsolverSerial.h"
+#include "RsolverControl.h"
 
 namespace Rsolver
 {
@@ -12,14 +14,19 @@ namespace Test
 {
 
 using namespace testing;
+static const int g_baud = 9600;
 const bool g_debugImages = true;
 static const Rsolver::CubeStateInUFRDBL g_solutionState = "UF UR UB UL DF DR DB DL FR FL BR BL UFR URB UBL ULF DRF DFL DLB DBR";
 #ifdef _WIN32
+static const int g_deviceId = 1;	// Use Droid Cam on windows
 static const std::string g_testDataFilesPath = "..\\..\\..\\rsolver\\data\\test_data\\";
 static const std::string g_cubeStatesTxtFile = "..\\..\\..\\rsolver\\data\\CubeStates.txt";
+static const std::string g_portName = "COM3";
 #else
+static const int g_deviceId = 0;
 static const std::string g_testDataFilesPath = "../../../rsolver/data/test_data/";
 static const std::string g_cubeStatesTxtFile = "../../../rsolver/data/CubeStates.txt";
+static const std::string g_portName = "ToBeImplemented";
 #endif
 
 class RsolverIntegrationTest : public testing::Test
@@ -27,8 +34,11 @@ class RsolverIntegrationTest : public testing::Test
 public:
 	void SetUp() override
 	{
+		int baud = g_baud;
+		m_rsolverSerial = std::make_unique<RsolverSerial>(g_portName, baud);
 		m_rsolverUtils = std::make_unique<RsolverUtils>(g_solutionState, g_cubeStatesTxtFile);
-		m_rsolverVision = std::make_unique<RsolverVision>();
+		m_rsolverVision = std::make_unique<RsolverVision>(g_deviceId);
+		m_rsolverControl = std::make_unique<RsolverControl>(std::move(m_rsolverSerial));
 	}
 
 	CubeStateInColors GetExpectedCubeStateInColorsForTestData()
@@ -110,14 +120,42 @@ public:
 		return stateInColors;
 	}
 
-	std::unique_ptr<IRsolverVision>	m_rsolverVision;
-	std::unique_ptr<IRsolverUtils>	m_rsolverUtils;
+	std::unique_ptr<IRsolverVision>		m_rsolverVision;
+	std::unique_ptr<IRsolverUtils>		m_rsolverUtils;
+	std::unique_ptr<IRsolverSerial>		m_rsolverSerial;
+	std::unique_ptr<IRsolverControl>	m_rsolverControl;
 };
 
-TEST_F(RsolverIntegrationTest, GetSolutionForTestDataImages)
+TEST_F(RsolverIntegrationTest, DISABLED_SerialPortTest)
+{
+	m_rsolverControl->InitializeRobot();
+	auto commands = m_rsolverControl->GenerateLockCubeInPlaceCommands();
+	m_rsolverControl->ExecuteRobotCommands(commands);
+}
+
+TEST_F(RsolverIntegrationTest, DISABLED_CaptureImageFromSensor)
+{
+	// Enable this test to check if camera works
+	auto img = m_rsolverVision->CaptureImageFromSensor();
+	EXPECT_EQ(g_defaultHeight, img.size().height);
+	EXPECT_EQ(g_defaultWidth, img.size().width);
+	if (g_debugImages)
+	{
+		cv::imshow("Sample", img);
+		cv::waitKey(0);
+	}
+}
+
+TEST_F(RsolverIntegrationTest, DISABLED_GetImagesForTesting)
+{
+	// Enable this test to capture new test data
+	m_rsolverVision->CalibrateCubeCameraDistanceGUI(true);
+}
+
+TEST_F(RsolverIntegrationTest, DISABLED_GetSolutionForTestDataImages)
 {
 	// Perform Calibration from Test Images
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < g_numFaces; i++)
 	{
 		std::string inputFileName = g_testDataFilesPath + "cube_" + std::to_string(i) + ".png";
 		cv::Mat img = cv::imread(inputFileName);
@@ -126,7 +164,7 @@ TEST_F(RsolverIntegrationTest, GetSolutionForTestDataImages)
 
 	// Identify colors of cubies in Test Images
 	CubeStateInColors cubeStateInColorsActual;
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < g_numFaces; i++)
 	{
 		std::string inputFileName = g_testDataFilesPath + "cube_" + std::to_string(i) + ".png";
 		cv::Mat img = cv::imread(inputFileName);
@@ -142,6 +180,48 @@ TEST_F(RsolverIntegrationTest, GetSolutionForTestDataImages)
 	// The algorithm implementation is deterministic, so it is safe to always expect same solution for a given input
 	auto cubeStateInUfrdbl = m_rsolverUtils->GetCubeStateInUFRDBL(cubeStateInColorsActual);
 	EXPECT_EQ(expectedSolution, m_rsolverUtils->SolveCubeFromGivenState(cubeStateInUfrdbl));
+}
+
+TEST_F(RsolverIntegrationTest, FullWorkFlow)
+{
+	m_rsolverControl->InitializeRobot();
+	auto lockCubeCommands = m_rsolverControl->GenerateLockCubeInPlaceCommands();
+	m_rsolverControl->ExecuteRobotCommands(lockCubeCommands);
+
+	 m_rsolverVision->CalibrateCubeCameraDistanceGUI(false);
+
+	std::vector<cv::Mat> cubeFaceImages;
+	for (int i = 0; i < g_numFaces; i++)
+	{
+		auto facePhoto = m_rsolverControl->GeneratePrepareForCapture(static_cast<CubeFaces>(i));
+		m_rsolverControl->ExecuteRobotCommands(facePhoto);
+		std::cout << "photo state" << std::endl;
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+		auto img = m_rsolverVision->CaptureImageFromSensor();
+		cubeFaceImages.emplace_back(img);
+		std::string filename = "cube_" + std::to_string(i) + ".png";
+		std::cout << "capturing" << filename << std::endl;
+		cv::imwrite(filename, img);
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+		m_rsolverVision->PerformBoundariesCalibrationByFaceColor(img, static_cast<Colors>(i));
+		auto faceRecover = m_rsolverControl->GenerateRecoverFromCapture(static_cast<CubeFaces>(i));
+		m_rsolverControl->ExecuteRobotCommands(faceRecover);
+	}
+
+	CubeStateInColors cubeStateInColorsActual;
+	for (int i = 0; i < g_numFaces; i++)
+	{
+		auto cubeFaceInfo = m_rsolverVision->GetCubeFaceInfoColorsFromImage(cubeFaceImages.at(i));
+		cubeStateInColorsActual.emplace_back(cubeFaceInfo);
+	}
+	Helpers::PrintCubeStateInColorsToConsole(cubeStateInColorsActual);
+
+	std::this_thread::sleep_for(std::chrono::seconds(60));
+	auto cubeStateInUfrdbl = m_rsolverUtils->GetCubeStateInUFRDBL(cubeStateInColorsActual);
+	auto cubeSolution = m_rsolverUtils->SolveCubeFromGivenState(cubeStateInUfrdbl);
+
+	auto commands = m_rsolverControl->GetRobotCommandsFromSolution(cubeSolution);
+	m_rsolverControl->ExecuteRobotCommands(commands);
 }
 
 }

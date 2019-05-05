@@ -4,6 +4,9 @@ set (INTERFACES
 	  "IRsolverControl.h"
 	  "IRsolverSerial.h")
 
+set (MOCK_FILES
+	"IRsolverSerialMock.h")
+
 set (SOURCES
 	  "RsolverUtils.cpp"
 	  "RsolverHelpers.cpp"
@@ -26,6 +29,7 @@ set (HEADERS
 source_group("interfaces" FILES ${INTERFACES})
 source_group("sources" FILES ${SOURCES})
 source_group("headers" FILES ${HEADERS})
+source_group("mocks" FILES ${MOCK_FILES})
 
 # Properties->C/C++->General->Additional Include Directories
 include_directories (.)
@@ -48,7 +52,7 @@ if (MSVC)
 endif (MSVC)
 
 # Also adds sources to the Solution Explorer
-add_library(rsolverutils STATIC ${INTERFACES} ${SOURCES} ${HEADERS})
+add_library(rsolverutils STATIC ${INTERFACES} ${SOURCES} ${HEADERS} ${MOCK_FILES})
 
 # Creates a folder "libraries" and adds target project (math.vcproj) under it
 set_property(TARGET rsolverutils PROPERTY FOLDER "libraries")

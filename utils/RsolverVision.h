@@ -26,7 +26,7 @@ struct CubeOverlayDefaults
 class RsolverVision : public IRsolverVision
 {
 	public:
-		explicit RsolverVision();
+		explicit RsolverVision(int deviceId);
 		~RsolverVision();
 
 		virtual cv::Mat CaptureImageFromSensor() override;
@@ -47,7 +47,7 @@ class RsolverVision : public IRsolverVision
 		void InitializeDefaultColorBoundaries();
 		LabVal GetLabValFromCubie(const cv::Mat& image);
 
-
+		int										m_deviceId;
 		int										m_width;
 		int										m_height;
 		cv::VideoCapture						m_videoCapture;

@@ -55,6 +55,17 @@ namespace Rsolver {
 			}
 		}
 
+		CubeFaces GetCubeFaceForLetter(const char& letter)
+		{
+			if (letter == 'U') return CubeFaces::Up;
+			if (letter == 'F') return CubeFaces::Front;
+			if (letter == 'R') return CubeFaces::Right;
+			if (letter == 'D') return CubeFaces::Down;
+			if (letter == 'B') return CubeFaces::Back;
+			if (letter == 'L') return CubeFaces::Left;
+			else throw std::runtime_error("Invalid CubeFace letter");
+		}
+
 		std::string ColorToString(Colors color)
 		{
 			switch (color)
@@ -242,6 +253,32 @@ namespace Rsolver {
 			case ControlCommands::SetMotors: return 0x02;
 			default:
 				throw std::runtime_error("Invalid Robot command");
+			}
+		}
+
+		Motors GetSliderForCubeFace(CubeFaces face)
+		{
+			switch (face)
+			{
+			case CubeFaces::Up:  return Motors::TopSlide;
+			case CubeFaces::Down:  return Motors::BottomSlide;
+			case CubeFaces::Right: case CubeFaces::Front: return Motors::RightSlide;
+			case CubeFaces::Left: case CubeFaces::Back: return Motors::LeftSlide;
+			default:
+				throw std::runtime_error("Invalid CubeFace for slider");
+			}
+		}
+
+		Motors GetGripperForCubeFace(CubeFaces face)
+		{
+			switch (face)
+			{
+			case CubeFaces::Up:  return Motors::TopGrip;
+			case CubeFaces::Down:  return Motors::BottomGrip;
+			case CubeFaces::Right: case CubeFaces::Front: return Motors::RightGrip;
+			case CubeFaces::Left: case CubeFaces::Back: return Motors::LeftGrip;
+			default:
+				throw std::runtime_error("Invalid CubeFace for gripper");
 			}
 		}
 

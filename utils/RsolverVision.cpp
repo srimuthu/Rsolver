@@ -1,9 +1,12 @@
+#include <thread>
+#include <chrono>
 #include "RsolverVision.h"
 #include "RsolverHelpers.h"
 
 namespace Rsolver {
-	RsolverVision::RsolverVision()
-		:m_width(g_defaultWidth)
+	RsolverVision::RsolverVision(int deviceId)
+		:m_deviceId(deviceId)
+		,m_width(g_defaultWidth)
 		,m_height(g_defaultHeight)
 	{
 		SetCaptureDimensions(m_width, m_height);
@@ -18,16 +21,22 @@ namespace Rsolver {
 
 	cv::Mat RsolverVision::CaptureImageFromSensor()
 	{
-		cv::Mat image;
+		cv::Mat originalFrame;
 		OpenVideoCapture();
-		m_videoCapture >> image;
-		if (image.empty())
+		int stabilizationFrames = 5;
+		int i = 0;
+		while (i < stabilizationFrames)
 		{
-			throw(std::runtime_error("Retrieved image from sensor is empty!"));
+			m_videoCapture >> originalFrame;
+			if (originalFrame.empty())
+			{
+				throw(std::runtime_error("Retrieved image from sensor is empty!"));
+			}
+			cv::waitKey(5);
+			i++;
 		}
 		m_videoCapture.release();
-		return image;
-
+		return originalFrame;
 	}
 
 	CubeFaceInfo RsolverVision::GetCubeFaceInfoColorsFromImage(const cv::Mat & faceImage)
@@ -80,11 +89,12 @@ namespace Rsolver {
 
 	void RsolverVision::OpenVideoCapture()
 	{
-		m_videoCapture.open(0);
+		m_videoCapture.open(m_deviceId);
 		if (!m_videoCapture.isOpened())
 		{
 			throw(std::runtime_error("Unable to open video capture"));
 		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 
 	void RsolverVision::SetCaptureDimensions(int width, int height)

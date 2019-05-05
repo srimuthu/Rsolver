@@ -12,7 +12,7 @@ namespace Test
 
 using namespace testing;
 
-namespace 
+namespace
 {
 	static const Rsolver::CubeStateInUFRDBL g_solutionState = "UF UR UB UL DF DR DB DL FR FL BR BL UFR URB UBL ULF DRF DFL DLB DBR";
 #ifdef _WIN32
@@ -224,7 +224,6 @@ TEST_F(RsolverUtilsTest, GetSolutionMovesForState1U)
 
 TEST_F(RsolverUtilsTest, GetSolutionMovesForStateComplexShuffle)
 {
-	// Returns cube state with one U+ performed on solved cube
 	CubeStateInColors cubeStateInColors = CreateNonDefaultCubeStateSeq1();
 	CubeStateInUFRDBL currentState = "RU LF UB DR DL BL UL FU BD RF BR FD LDF LBD FUL RFD UFR RDB UBL RBU";
 	EXPECT_EQ(currentState, m_rsolverUtils->GetCubeStateInUFRDBL(cubeStateInColors));
@@ -235,7 +234,6 @@ TEST_F(RsolverUtilsTest, GetSolutionMovesForStateComplexShuffle)
 
 TEST_F(RsolverUtilsTest, GetSolutionMovesForStateComplexShuffle2)
 {
-	// Returns cube state with one U+ performed on solved cube
 	CubeStateInColors cubeStateInColors = CreateNonDefaultCubeStateSeq2();
 	CubeStateInUFRDBL currentState = "DB LU DF DR BR LF UF UB BL UR RF LD UFR RBU LDF ULF DRF BRD BLU LBD";
 	EXPECT_EQ(currentState, m_rsolverUtils->GetCubeStateInUFRDBL(cubeStateInColors));

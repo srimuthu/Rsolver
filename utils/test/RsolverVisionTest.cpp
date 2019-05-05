@@ -13,6 +13,7 @@ namespace Test
 
 using namespace testing;
 const bool g_debugImages = true;
+static const int g_deviceId = 0;
 #ifdef _WIN32
 static const std::string g_testDataFilesPath = "..\\..\\..\\rsolver\\data\\test_data\\";
 #else
@@ -24,7 +25,7 @@ class RsolverVisionTest : public testing::Test
 public:
 	void SetUp() override
 	{
-		m_rsolverVision = std::make_unique<RsolverVision>();
+		m_rsolverVision = std::make_unique<RsolverVision>(g_deviceId);
 	}
 
 	CubeStateInColors GetExpectedCubeStateInColorsForTestData()
@@ -108,42 +109,6 @@ public:
 
 	std::unique_ptr<RsolverVision>	m_rsolverVision;
 };
-
-TEST_F(RsolverVisionTest, DISABLED_CaptureImageFromSensor)
-{
-	// Enable this test to check if camera works
-	auto img = m_rsolverVision->CaptureImageFromSensor();
-	EXPECT_EQ(g_defaultHeight, img.size().height);
-	EXPECT_EQ(g_defaultWidth, img.size().width);
-	if (g_debugImages)
-	{
-		cv::imshow("Sample", img);
-		cv::waitKey(0);
-	}
-}
-
-TEST_F(RsolverVisionTest, DISABLED_GetImagesForTesting)
-{
-	// Enable this test to capture new test data
-	m_rsolverVision->CalibrateCubeCameraDistanceGUI(true);
-}
-
-
-TEST_F(RsolverVisionTest, DISABLED_WriteCubiesToDisk)
-{
-	// Enable this test to see if the cubies are being cropped properly
-	for (int i = 0; i < 6; i++)
-	{
-		std::string inputFileName = "cube_" + std::to_string(i) + ".png";
-		cv::Mat img = cv::imread(inputFileName);
-		for (auto j = 0; j < g_cubiesPerFace; j++)
-		{
-			cv::Mat cubieImage = m_rsolverVision->GetCubieAtIndex(img, j);
-			std::string outputFileName = "face_" + std::to_string(i) + "_cubie_" + std::to_string(j) + ".png";
-			cv::imwrite(outputFileName, cubieImage);
-		}
-	}
-}
 
 TEST_F(RsolverVisionTest, CalibrateBoundariesForTestDataImages)
 {

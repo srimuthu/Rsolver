@@ -128,6 +128,11 @@ struct RobotCommand {
 	unsigned char arg2;
 };
 
+struct MoveInfo {
+	CubeFaces face;
+	int times;
+};
+
 }
 
 
