@@ -1,6 +1,7 @@
 #pragma once
 
 #include<vector>
+#include<functional>
 #include "RsolverTypes.h"
 
 namespace Rsolver
@@ -16,6 +17,7 @@ public:
 	virtual std::vector<RobotCommand> GenerateLockCubeInPlaceCommands() = 0;
 	virtual std::vector<RobotCommand> GeneratePrepareForCapture(CubeFaces face) = 0;
 	virtual std::vector<RobotCommand> GenerateRecoverFromCapture(CubeFaces face) = 0;
+	virtual void SetProgressUpdateCallback(std::function<void(Progress)> cb) = 0;
 };
 }
 

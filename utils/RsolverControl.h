@@ -17,6 +17,7 @@ public:
 	virtual std::vector<RobotCommand> GenerateLockCubeInPlaceCommands() override;
 	virtual std::vector<RobotCommand> GeneratePrepareForCapture(CubeFaces face) override;
 	virtual std::vector<RobotCommand> GenerateRecoverFromCapture(CubeFaces face) override;
+	virtual void SetProgressUpdateCallback(std::function<void(Progress)> cb) override;
 
 	// Non-interface public methods (maybe move to another interface?)
 	void ConfigureWaitForAcknowledge(bool waitForAck);
@@ -37,11 +38,13 @@ private:
 	void PerformOneCubeFaceRotation(std::vector<RobotCommand>& commands, CubeFaces cubeFace);
 	bool SendSerialCommand(RobotCommand command);
 
+	void TriggerProgressUpdateCb(int totalSteps, int currentStep);
 
 	std::unique_ptr<IRsolverSerial>		m_serial;
 	RobotCommand						m_robotMoveCommand;
 	int									m_responseCounter;
 	bool								m_waitForAck;
+	std::function<void(Progress)>		m_progressCb;
 
 };
 

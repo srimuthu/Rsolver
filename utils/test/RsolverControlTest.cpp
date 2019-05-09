@@ -74,6 +74,26 @@ TEST_F(RsolverControlTest, MoveInfoExtractionTest)
 	EXPECT_EQ(moveInfo.times, 2);
 }
 
+TEST_F(RsolverControlTest, SetProgressCallbackTest)
+{
+	int numCalls = 0;
+	m_rsolverControl->SetProgressUpdateCallback([&](Progress progress) {
+		numCalls++;
+	});
+	std::vector<RobotCommand> commands = m_rsolverControl->GenerateLockCubeInPlaceCommands();
+	auto totalCommands = commands.size();
+	{
+		InSequence seq;
+		for (auto i = 0; i < totalCommands; i++)
+		{
+			EXPECT_CALL(*m_rsolverSerialMock, WriteToSerial(_, _));
+			EXPECT_CALL(*m_rsolverSerialMock, ReadLineFromSerial()).WillOnce(Return(std::to_string(i+1)));
+		}
+	}
+	m_rsolverControl->ExecuteRobotCommands(commands);
+	EXPECT_EQ(numCalls, totalCommands);
+}
+
 /*TEST_F(RsolverControlTest, GetMoveCommandsFromSolutionTest)
 {
 	const std::string solution = "U2 D3 B3 U1 R1 D2 L2 D2 L1 U3 L3 D2 B2 U1 R2 F2 U1 L2 U3 U2 R2 F2 R2 F2 U2 F2 U2 F2 U2";

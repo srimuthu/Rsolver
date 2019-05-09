@@ -7,6 +7,7 @@ namespace Rsolver {
 		: m_serial(std::move(serial))
 		, m_responseCounter(0)
 		, m_waitForAck(true)
+		, m_progressCb(nullptr)
 	{
 		m_robotMoveCommand.command = static_cast<unsigned char>(Helpers::ConvertControlCommand(ControlCommands::SetMotors));
 		m_robotMoveCommand.arg1 = static_cast<unsigned char>(0x00);
@@ -41,12 +42,14 @@ namespace Rsolver {
 
 	void Rsolver::RsolverControl::ExecuteRobotCommands(std::vector<RobotCommand> robotCommands)
 	{
+		int currentStep = 0;
 		for (const auto& cmd : robotCommands)
 		{
 			if (!SendSerialCommand(cmd))
 			{
 				throw std::runtime_error( "Command response mismatch! aborting");
 			}
+			TriggerProgressUpdateCb(robotCommands.size(), ++currentStep);
 		}
 	}
 
@@ -156,6 +159,15 @@ namespace Rsolver {
 			m_responseCounter++;
 		}
 		return true;
+	}
+
+	void RsolverControl::TriggerProgressUpdateCb(int totalSteps, int currentStep)
+	{
+		if (m_progressCb)
+		{
+			Progress progress(totalSteps, currentStep);
+			m_progressCb(progress);
+		}
 	}
 
 	RobotCommand RsolverControl::Extend(Motors motor)
@@ -413,6 +425,11 @@ namespace Rsolver {
 			throw std::runtime_error("Invalid Cube Face");
 
 		}
+	}
+
+	void RsolverControl::SetProgressUpdateCallback(std::function<void(Progress)> cb)
+	{
+		m_progressCb = cb;
 	}
 
 }

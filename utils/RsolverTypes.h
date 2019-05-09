@@ -133,6 +133,16 @@ struct MoveInfo {
 	int times;
 };
 
+struct Progress {
+	Progress(int total, int current)
+		: totalSteps(total)
+		, currentStep(current)
+	{}
+
+	int totalSteps;
+	int currentStep;
+};
+
 }
 
 

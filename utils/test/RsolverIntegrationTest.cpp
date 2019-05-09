@@ -185,25 +185,28 @@ TEST_F(RsolverIntegrationTest, DISABLED_GetSolutionForTestDataImages)
 TEST_F(RsolverIntegrationTest, FullWorkFlow)
 {
 	m_rsolverControl->InitializeRobot();
+	std::cout << "Place cube" << std::endl;
 	auto lockCubeCommands = m_rsolverControl->GenerateLockCubeInPlaceCommands();
+	std::string stage = "Locking Cube in Place";
+	m_rsolverControl->SetProgressUpdateCallback([&stage](Progress progress) {
+		std::cout << stage << ": " << progress.currentStep << "/" << progress.totalSteps << std::setw(20) << "\r";
+		std::cout.flush();
+	});
 	m_rsolverControl->ExecuteRobotCommands(lockCubeCommands);
 
-	 m_rsolverVision->CalibrateCubeCameraDistanceGUI(false);
+	m_rsolverVision->CalibrateCubeCameraDistanceGUI(false);
 
 	std::vector<cv::Mat> cubeFaceImages;
 	for (int i = 0; i < g_numFaces; i++)
 	{
+		stage = "Preparing for capture face " + std::to_string(i);
 		auto facePhoto = m_rsolverControl->GeneratePrepareForCapture(static_cast<CubeFaces>(i));
 		m_rsolverControl->ExecuteRobotCommands(facePhoto);
-		std::cout << "photo state" << std::endl;
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 		auto img = m_rsolverVision->CaptureImageFromSensor();
 		cubeFaceImages.emplace_back(img);
-		std::string filename = "cube_" + std::to_string(i) + ".png";
-		std::cout << "capturing" << filename << std::endl;
-		cv::imwrite(filename, img);
-		std::this_thread::sleep_for(std::chrono::seconds(1));
 		m_rsolverVision->PerformBoundariesCalibrationByFaceColor(img, static_cast<Colors>(i));
+		stage = "Recovering from capture face " + std::to_string(i);
 		auto faceRecover = m_rsolverControl->GenerateRecoverFromCapture(static_cast<CubeFaces>(i));
 		m_rsolverControl->ExecuteRobotCommands(faceRecover);
 	}
@@ -214,12 +217,15 @@ TEST_F(RsolverIntegrationTest, FullWorkFlow)
 		auto cubeFaceInfo = m_rsolverVision->GetCubeFaceInfoColorsFromImage(cubeFaceImages.at(i));
 		cubeStateInColorsActual.emplace_back(cubeFaceInfo);
 	}
+
+	std::cout << "\nDetected Cube State :" << std::endl;
 	Helpers::PrintCubeStateInColorsToConsole(cubeStateInColorsActual);
 
-	std::this_thread::sleep_for(std::chrono::seconds(60));
+	std::cout << "Solving . . ." << std::endl;
 	auto cubeStateInUfrdbl = m_rsolverUtils->GetCubeStateInUFRDBL(cubeStateInColorsActual);
 	auto cubeSolution = m_rsolverUtils->SolveCubeFromGivenState(cubeStateInUfrdbl);
 
+	stage = "Solving Cube ";
 	auto commands = m_rsolverControl->GetRobotCommandsFromSolution(cubeSolution);
 	m_rsolverControl->ExecuteRobotCommands(commands);
 }
