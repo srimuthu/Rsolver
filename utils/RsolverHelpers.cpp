@@ -5,6 +5,7 @@
 #include <iterator>
 #include <algorithm>
 #include <regex>
+#include <iomanip>
 #include "RsolverHelpers.h"
 
 namespace Rsolver {
@@ -90,6 +91,12 @@ namespace Rsolver {
 				}
 				std::cout << std::endl;
 			}
+		}
+
+		void PrintProgressUpdate(Progress progress, std::string stage)
+		{
+			std::cout << stage << ": " << progress.currentStep << "/" << progress.totalSteps << std::setw(20) << "\r";
+			std::cout.flush();
 		}
 
 		FaceColorVector GetDefaultFaceColorVectorForColor(Colors color)

@@ -7,9 +7,9 @@ include_directories ("${PROJECT_SOURCE_DIR}/utils")
 add_executable (app main.cpp)
 
 # Properties->Linker->Input->Additional Dependencies
-# target_link_libraries (app  math)
+# target_link_libraries (app  utils)
 
-# Creates a folder "executables" and adds target 
+# Creates a folder "executables" and adds target
 # project (app.vcproj) under it
 set_property(TARGET app PROPERTY FOLDER "executables")
 

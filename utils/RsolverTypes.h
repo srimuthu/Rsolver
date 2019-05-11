@@ -123,6 +123,12 @@ enum class ControlCommands {
 };
 
 struct RobotCommand {
+	RobotCommand()
+	{
+		command = 0xFE;
+		arg1 = 0x00;
+		arg2 = 0x00;
+	}
 	unsigned char command;
 	unsigned char arg1;
 	unsigned char arg2;

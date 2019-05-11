@@ -49,7 +49,7 @@ namespace Rsolver {
 			{
 				throw std::runtime_error( "Command response mismatch! aborting");
 			}
-			TriggerProgressUpdateCb(robotCommands.size(), ++currentStep);
+			TriggerProgressUpdateCb(static_cast<int>(robotCommands.size()), ++currentStep);
 		}
 	}
 

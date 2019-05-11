@@ -189,8 +189,7 @@ TEST_F(RsolverIntegrationTest, FullWorkFlow)
 	auto lockCubeCommands = m_rsolverControl->GenerateLockCubeInPlaceCommands();
 	std::string stage = "Locking Cube in Place";
 	m_rsolverControl->SetProgressUpdateCallback([&stage](Progress progress) {
-		std::cout << stage << ": " << progress.currentStep << "/" << progress.totalSteps << std::setw(20) << "\r";
-		std::cout.flush();
+		Helpers::PrintProgressUpdate(progress, stage);
 	});
 	m_rsolverControl->ExecuteRobotCommands(lockCubeCommands);
 

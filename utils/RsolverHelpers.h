@@ -14,6 +14,7 @@ namespace Rsolver {
 		std::string ColorToString(Colors color);
 
 		void PrintCubeStateInColorsToConsole(CubeStateInColors cubeStateInColors);
+		void PrintProgressUpdate(Progress progress, std::string stage);
 
 		FaceColorVector GetDefaultFaceColorVectorForColor(Colors color);
 		CubeStateInColors GetDefaultSolvedCubeStateInColors();

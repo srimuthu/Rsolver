@@ -34,23 +34,6 @@ source_group("mocks" FILES ${MOCK_FILES})
 # Properties->C/C++->General->Additional Include Directories
 include_directories (.)
 
-# The following step has already been performed for UNIX from top level Cmakelists
-if (MSVC)
-	set(OpenCV_INCLUDE_DIRS
-	"D:/Program Files/opencv310/opencv/build/include")
-	set(OpenCV_LIBS
-	"D:/Program Files/opencv310/opencv/build/x64/vc14/lib/opencv_world310d.lib")
-	set(BOOST_INCLUDE_DIRS
-	"D:/sb/libraries/boost_1_69_0")
-	set(BOOST_LIBS
-	"D:/sb/libraries/boost_1_69_0/stage/lib/libboost_date_time-vc141-mt-gd-x64-1_69.lib"
-	"D:/sb/libraries/boost_1_69_0/stage/lib/libboost_regex-vc141-mt-gd-x64-1_69.lib"
-	)
-	message(STATUS "    libraries: ${OpenCV_LIBS}")
-	message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
-	include_directories(${OpenCV_INCLUDE_DIRS} ${BOOST_INCLUDE_DIRS})
-endif (MSVC)
-
 # Also adds sources to the Solution Explorer
 add_library(rsolverutils STATIC ${INTERFACES} ${SOURCES} ${HEADERS} ${MOCK_FILES})
 

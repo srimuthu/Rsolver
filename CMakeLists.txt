@@ -9,6 +9,23 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 if (MSVC)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
 endif (MSVC)
+# The following step has already been performed for UNIX from top level Cmakelists
+if (MSVC)
+    set(OpenCV_INCLUDE_DIRS
+    "D:/Program Files/opencv310/opencv/build/include")
+    set(OpenCV_LIBS
+    "D:/Program Files/opencv310/opencv/build/x64/vc14/lib/opencv_world310d.lib")
+    set(BOOST_INCLUDE_DIRS
+    "D:/sb/libraries/boost_1_69_0")
+    set(BOOST_LIBS
+    "D:/sb/libraries/boost_1_69_0/stage/lib/libboost_date_time-vc141-mt-gd-x64-1_69.lib"
+    "D:/sb/libraries/boost_1_69_0/stage/lib/libboost_regex-vc141-mt-gd-x64-1_69.lib"
+    )
+    message(STATUS "    libraries: ${OpenCV_LIBS}")
+    message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
+    include_directories(${OpenCV_INCLUDE_DIRS} ${BOOST_INCLUDE_DIRS})
+endif (MSVC)
+
 if (UNIX)
     find_package(OpenCV REQUIRED)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
