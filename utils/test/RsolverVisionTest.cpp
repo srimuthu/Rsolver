@@ -12,7 +12,7 @@ namespace Test
 {
 
 using namespace testing;
-const bool g_debugImages = true;
+const bool g_debugImages = false;
 static const int g_deviceId = 0;
 #ifdef _WIN32
 static const std::string g_testDataFilesPath = "..\\..\\..\\rsolver\\data\\test_data\\";

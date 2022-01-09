@@ -13,10 +13,13 @@ import sys, time, os
 import serial
 
 msgLen = 3
-serPort = "COM3"
+serPort = "COM16"
 cmdDict = {"NO_PENDING": 0xfe,
            "BLINK_LED": 0x01,
-           "SET_MOTORS": 0x02}
+           "SET_MOTORS": 0x02,
+           "ENTER_CALIBRATION_MODE": 0x03,
+           "CALIBRATION_MODE": 0x04,
+           "EXIT_CALIBRATION_MODE": 0x05}
 
 motorDict = {"BGRIP": 0,
              "RGRIP": 1,
@@ -80,7 +83,7 @@ class ArduinoComm():
 class RobotControl(ArduinoComm):
 
     def __init__(self):
-        self.arduinoComm = ArduinoComm("COM3", 9600)
+        self.arduinoComm = ArduinoComm(serPort, 9600)
         self.gripperCmd = 0x00
         self.sliderCmd = 0x00
 
@@ -96,7 +99,7 @@ class RobotControl(ArduinoComm):
             self.gripperCmd = (self.gripperCmd | (3 << (motorIdx*2)))
         else:
             self.sliderCmd = (self.sliderCmd | (3 << ((motorIdx-4)*2)))
-        self.TransmitCommand()
+        self.TransmitCommand("SET_MOTORS", self.gripperCmd, self.sliderCmd)
 
     def __neutral(self, motor):
         if motor not in motorDict:
@@ -107,10 +110,27 @@ class RobotControl(ArduinoComm):
             self.gripperCmd = self.gripperCmd & (0xFF ^ (3 << (motorIdx * 2)))
         else:
             self.sliderCmd = self.sliderCmd & (0xFF ^ (3 << ((motorIdx - 4) * 2)))
-        self.TransmitCommand()
+        self.TransmitCommand("SET_MOTORS", self.gripperCmd, self.sliderCmd)
 
-    def TransmitCommand(self):
-        self.arduinoComm.SendMessage("SET_MOTORS", [self.gripperCmd, self.sliderCmd])
+    def __calibrate(self, motor, operation, value):
+        if motor not in motorDict:
+            print("Invalid motor")
+            return False
+        motorIdx = motorDict[motor]
+        cmdByte1 = 0xFF & (motorIdx << 4)
+        cmdByte1 = cmdByte1 ^ operation
+        cmdByte2 = 0xFF
+        if(value < 0):
+            cmdByte2 = cmdByte2 & (1 << 7)
+            value = value * -1 
+        else:
+            cmdByte2 = cmdByte2 & (0 << 7)
+        cmdByte2 = cmdByte2 ^ value
+        print(motor, motorIdx, cmdByte1, cmdByte2)
+        self.TransmitCommand("CALIBRATION_MODE", cmdByte1, cmdByte2)
+
+    def TransmitCommand(self, cmd, byte1=0, byte2=0):
+        self.arduinoComm.SendMessage(cmd, [byte1, byte2])
 
     def LockCubeInPlace(self):
         self.__neutral("BGRIP")
@@ -124,7 +144,7 @@ class RobotControl(ArduinoComm):
 
     def __displayMotorChoices(self):
         print("0. Bgrip \t 1. Rgrip \t 2. Lgrip \t 3. Tgrip \
-              \t 4. Bslide \t 5. Rslide \t 6. Lslide \t 7. Tslide")
+              \n 4. Bslide \t 5. Rslide \t 6. Lslide \t 7. Tslide")
 
     def __displayOperationChoices(self):
         print("1. Neutral \t 2. Extend \t 3. No Change \t 4. Exit")
@@ -150,16 +170,40 @@ class RobotControl(ArduinoComm):
             return 0
         return -1
 
+    def __calibrationControl(self):
+        print("Calibration menu \n")
+        self.__displayMotorChoices()
+        motorChoice = int(input())
+        self.__displayOperationChoices()
+        operationChoice = int(input())
+        print("Enter value for calibration: ")
+        calValue = int(input())
+        if(motorChoice>7 or operationChoice>4): return -1
+        if(operationChoice == 1):
+            self.__calibrate(self.__getMotorForNumber(motorChoice), 0, calValue)
+        elif(operationChoice == 2):
+            self.__calibrate(self.__getMotorForNumber(motorChoice), 1, calValue)
+        elif(operationChoice == 3):
+            return -1
+        elif (operationChoice == 4):
+            self.TransmitCommand("EXIT_CALIBRATION_MODE")
+            time.sleep(1)
+            print(self.arduinoComm.ReceiveMessage())
+            return 0
+        return -1
+
     def DisplayUI(self):
         breakloop = -1
+        self.TransmitCommand("ENTER_CALIBRATION_MODE")
         while breakloop != 0:
-            breakloop = self.__interactiveControl()
+            #breakloop = self.__interactiveControl()
+            breakloop = self.__calibrationControl()
 
 
 # testing purposes
 if __name__ == '__main__':
 
     rcontrol = RobotControl()
-    time.sleep(5)
-    rcontrol.LockCubeInPlace()
+    time.sleep(10)
+    # rcontrol.LockCubeInPlace()
     rcontrol.DisplayUI()

@@ -18,10 +18,10 @@ static const int g_baud = 9600;
 const bool g_debugImages = true;
 static const Rsolver::CubeStateInUFRDBL g_solutionState = "UF UR UB UL DF DR DB DL FR FL BR BL UFR URB UBL ULF DRF DFL DLB DBR";
 #ifdef _WIN32
-static const int g_deviceId = 1;	// Use Droid Cam on windows
+static const int g_deviceId = 1;	// 1 = Use Droid Cam on windows
 static const std::string g_testDataFilesPath = "..\\..\\..\\rsolver\\data\\test_data\\";
 static const std::string g_cubeStatesTxtFile = "..\\..\\..\\rsolver\\data\\CubeStates.txt";
-static const std::string g_portName = "COM3";
+static const std::string g_portName = "COM16";
 #else
 static const int g_deviceId = 0;
 static const std::string g_testDataFilesPath = "../../../rsolver/data/test_data/";
@@ -144,6 +144,11 @@ TEST_F(RsolverIntegrationTest, DISABLED_CaptureImageFromSensor)
 		cv::imshow("Sample", img);
 		cv::waitKey(0);
 	}
+}
+
+TEST_F(RsolverIntegrationTest, DISABLED_CalibrateCubeCameraDistanceTest)
+{
+	m_rsolverVision->CalibrateCubeCameraDistanceGUI(false);
 }
 
 TEST_F(RsolverIntegrationTest, DISABLED_GetImagesForTesting)

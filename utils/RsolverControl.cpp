@@ -1,3 +1,5 @@
+#include <chrono>
+#include <thread>
 #include "RsolverControl.h"
 #include "RsolverHelpers.h"
 
@@ -21,6 +23,7 @@ namespace Rsolver {
 	void RsolverControl::InitializeRobot()
 	{
 		m_serial->Initialize();
+		std::this_thread::sleep_for(std::chrono::seconds(8)); // Robot POST time
 		auto reply = m_serial->ReadLineFromSerial();
 		if (reply != "Ready\r")
 		{
